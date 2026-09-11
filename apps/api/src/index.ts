@@ -26,4 +26,20 @@ app.post("/post", async (c) => {
   });
 });
 
+app.post("/validation", async (c) => {
+  const body = await c.req.json();
+  const id = body.id;
+  const name = body.name;
+  if (typeof id !== "number" || typeof name !== "string") {
+    c.status(400);
+    return c.json({
+      error: "Bad Request",
+    });
+  }
+  c.status(200);
+  return c.json({
+    message: "Validation successful",
+  });
+});
+
 export default app;
