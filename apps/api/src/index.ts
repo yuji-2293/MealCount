@@ -27,16 +27,28 @@ app.post("/post", async (c) => {
 });
 
 app.post("/validation", async (c) => {
-  const body = await c.req.json();
+  let body;
+  // jsonの取得でエラーが起きてないか確認する
+  try {
+    body = await c.req.json();
+  } catch (error) {
+    console.error(error);
+    c.status(400);
+    return c.json({
+      error: "json parse error",
+    });
+  }
+  // 取得したjsonの中身からidとnameを取り出す
   const id = body.id;
   const name = body.name;
+  // 取り出したidとnameの型を確認するvalidationにかける
   if (typeof id !== "number" || typeof name !== "string") {
     c.status(400);
     return c.json({
       error: "Bad Request",
     });
   }
-  c.status(200);
+  // validationに成功した場合のレスポンスを返す
   return c.json({
     message: "Validation successful",
   });
