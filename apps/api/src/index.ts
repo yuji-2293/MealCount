@@ -21,10 +21,22 @@ const objectSchema = z.object({
   name: z.string(),
 });
 
-app.post("/validation", zValidator('json', objectSchema), (c) => {
-  const data =  c.req.valid('json');
+app.post("/validation", zValidator("json", objectSchema), (c) => {
+  const data = c.req.valid("json");
   console.log(data);
   return c.json(data);
 });
+
+// curlでPOSTリクエストを送る例
+
+// curl -i -X POST http://localhost:8787/validation \
+//   -H "Content-Type: application/json" \
+//   -d '{"id":1,"name":"yuji"}'
+
+// オプション説明
+// -i  → Response Headerも表示
+// -X  → HTTP Method
+// -H  → Request Header
+// -d  → Request Body
 
 export default app;
