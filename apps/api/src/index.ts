@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import users from "./routes/users";
-import purchases from "./routes/purchases";
+import users from "./modules/purchases/routes/purchaseRoutes";
+import purchases from "./modules/purchases/routes/purchaseRoutes";
 
 const app = new Hono();
 app.get("/", (c) => {
