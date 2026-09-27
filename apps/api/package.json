@@ -13,6 +13,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260927.1",
     "drizzle-kit": "^0.31.11",
     "wrangler": "^4.110.0"
   }
