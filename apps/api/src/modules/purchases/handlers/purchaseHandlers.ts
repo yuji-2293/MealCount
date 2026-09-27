@@ -1,16 +1,18 @@
 import { calculatePurchaseService } from "../services/purchaseServices";
 import type { Context } from "hono";
-import { CreatePurchaseData } from "../schemas/purchaseSchemas";
+import type { CreatePurchaseData } from "../schemas/purchaseSchemas";
 
 // Handlerでcontextの型を指定するためのInputContextを定義
 // ここでInputContextの型を定義することで、Handler内でcontextの型を明示的に指定できるようにする
+// in: { json: CreatePurchaseData } の形で入力を受け取り
+// out: { json: CreatePurchaseData } の形で出力することを指定している
 type InputContext = Context<
-  any,
-  any,
+  any, // Request type
+  any, // Response type
   {
     in: { json: CreatePurchaseData };
     out: { json: CreatePurchaseData };
-  }
+  } // Input and Output types
 >;
 
 // validatedされたjsonデータを取得するためのHandler関数
