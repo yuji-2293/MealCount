@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const purchaseSchema = z.object({
   purchasedMealCount: z.number().positive().int(),
-  sameDayAmount: z.number().positive(),
-  plannedAmount: z.number().positive(),
-  monthlyAmount: z.number().positive(),
+  sameDayAmount: z.number().nonnegative().int(),
+  plannedAmount: z.number().nonnegative().int(),
+  monthlyAmount: z.number().nonnegative().int(),
   purchaseDate: z.string(),
 });
 

@@ -1,5 +1,5 @@
 // schema から推論された型をimport
-import type { CreatePurchaseData } from "../schemas/purchaseSchemas";
+import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 
 export const calculatePurchaseService = {
   calculateAmount: async (data: CreatePurchaseData) => {

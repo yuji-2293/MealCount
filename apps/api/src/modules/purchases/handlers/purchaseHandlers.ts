@@ -1,6 +1,6 @@
-import { calculatePurchaseService } from "../services/purchaseServices";
+import { calculatePurchaseService } from "@/modules/purchases/services/purchaseServices";
 import type { Context } from "hono";
-import type { CreatePurchaseData } from "../schemas/purchaseSchemas";
+import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 
 // Handlerでcontextの型を指定するためのInputContextを定義
 // ここでInputContextの型を定義することで、Handler内でcontextの型を明示的に指定できるようにする

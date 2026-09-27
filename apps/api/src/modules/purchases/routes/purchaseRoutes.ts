@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { purchaseSchema } from "../schemas/purchaseSchemas";
-import { purchaseHandler } from "../handlers/purchaseHandlers";
+import { purchaseSchema } from "@/modules/purchases/schemas/purchaseSchemas";
+import { purchaseHandler } from "@/modules/purchases/handlers/purchaseHandlers";
 
 const purchases = new Hono();
 
