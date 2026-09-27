@@ -2,7 +2,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "api",
   "main": "src/index.ts",
-  "compatibility_date": "2026-09-06"
+  "compatibility_date": "2026-09-06",
+  "d1_databases": [
+    {
+      "binding": "meal_count_db",
+      "database_name": "meal-count-db",
+      "database_id": "633c7dc5-8bca-4cac-ba33-6167079c6aef",
+      "remote": false,
+    },
+  ],
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
