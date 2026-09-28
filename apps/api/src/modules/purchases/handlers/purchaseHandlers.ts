@@ -1,4 +1,4 @@
-import { calculatePurchaseService } from "@/modules/purchases/services/purchaseServices";
+import { purchaseService } from "@/modules/purchases/services/purchaseServices";
 import type { Context } from "hono";
 import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 import type { Bindings } from "@/types/bindings";
@@ -18,6 +18,6 @@ export const purchaseHandler = async (c: InputContext) => {
   const d1 = c.env.meal_count_db;
 
   const data = c.req.valid("json");
-  const result = await calculatePurchaseService.calculateAmount(data, d1);
+  const result = await purchaseService.createPurchase(data, d1);
   return c.json(result, 201);
 };
