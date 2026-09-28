@@ -2,12 +2,7 @@
 import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 import type { D1Database } from "@cloudflare/workers-types";
 import { purchaseRepository } from "@/modules/purchases/repositories/purchaseRepository";
-
-type PurchaseAmounts = {
-  totalAmount: number;
-  totalRealAmount: number;
-  oneMealCost: number;
-};
+import type { PurchaseAmounts } from "@/modules/purchases/types/purchaseTypes";
 
 const calculateTotalAmount = (data: CreatePurchaseData): PurchaseAmounts => {
   const totalAmount =

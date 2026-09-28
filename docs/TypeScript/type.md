@@ -25,3 +25,13 @@ const calculateTotalAmount = (
 ↑入力の型: CreatePurchaseData
 :型
 ↑出力の型: PurchaseAmounts 
+
+## データ構造の違い
+### 外部データ
+schema/ : 外部データの型定義
+POSTされてきたユーザーのデータ
+->CreatePurchaseData
+
+types/ : アプリケーション内部で使用する型定義
+ドメイン上必要になる型を定義する
+->PurchaseAmounts

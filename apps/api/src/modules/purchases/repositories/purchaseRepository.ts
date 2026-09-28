@@ -5,10 +5,14 @@ import { purchases } from "@/db/schema";
 
 export const purchaseRepository = {
   create: async (data: CreatePurchaseData, d1: D1Database) => {
-    const db = drizzle(d1);
-    const now = new Date().toISOString();
+    const db = drizzle(d1); // Local D1へのアクセス用
+    const now = new Date().toISOString(); // 現在日時をISO形式で取得
+
     const [result] = await db
-      .insert(purchases)
+      // 分割代入で挿入結果の最初のレコードを取得
+      // [result] = ...でDBの挿入結果の最初のレコードを取得
+      // [result] -> result には挿入後の最初のレコードが格納される
+      .insert(purchases) // purchasesテーブルに対してINSERT操作を行う
       .values({
         purchased_meal_count: data.purchasedMealCount,
         same_day_amount: data.sameDayAmount,
@@ -18,7 +22,7 @@ export const purchaseRepository = {
         created_at: now,
         updated_at: now,
       })
-      .returning();
+      .returning(); // 挿入後のレコードを取得
     return result;
   },
 };
