@@ -9,9 +9,6 @@ export const purchaseRepository = {
     const now = new Date().toISOString(); // 現在日時をISO形式で取得
 
     const [result] = await db
-      // 分割代入で挿入結果の最初のレコードを取得
-      // [result] = ...でDBの挿入結果の最初のレコードを取得
-      // [result] -> result には挿入後の最初のレコードが格納される
       .insert(purchases) // purchasesテーブルに対してINSERT操作を行う
       .values({
         purchased_meal_count: data.purchasedMealCount,
