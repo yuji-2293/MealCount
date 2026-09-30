@@ -1,10 +1,10 @@
 import { drizzle } from "drizzle-orm/d1";
 import type { D1Database } from "@cloudflare/workers-types";
-import type { PurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
+import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 import { purchases } from "@/db/schema";
 
 export const purchaseRepository = {
-  create: async (data: PurchaseData, d1: D1Database) => {
+  create: async (data: CreatePurchaseData, d1: D1Database) => {
     const db = drizzle(d1); // Local D1へのアクセス用
     const now = new Date().toISOString(); // 現在日時をISO形式で取得
 
@@ -22,6 +22,7 @@ export const purchaseRepository = {
       .returning(); // 挿入後のレコードを取得
     return result;
   },
+
   findAll: async (d1: D1Database) => {
     const db = drizzle(d1); // Local D1へのアクセス用
     const results = await db.select().from(purchases);

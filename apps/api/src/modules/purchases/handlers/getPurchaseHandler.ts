@@ -1,13 +1,13 @@
 import { purchaseService } from "@/modules/purchases/services/purchaseServices";
 import type { Bindings } from "@/types/bindings";
-import type { PurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
+import type { GetPurchaseResponse } from "@/modules/purchases/types/purchaseTypes";
 import type { Context } from "hono";
 
 type OutPutContext = Context<
   { Bindings: Bindings },
   any,
   {
-    out: { json: PurchaseData[] };
+    out: { json: GetPurchaseResponse[] };
   }
 >;
 
