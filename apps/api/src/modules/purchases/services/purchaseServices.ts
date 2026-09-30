@@ -5,7 +5,6 @@ import { purchaseRepository } from "@/modules/purchases/repositories/purchaseRep
 import type {
   PurchaseAmounts,
   CalculateAmounts,
-  ReturnCalculatedAmounts,
 } from "@/modules/purchases/types/purchaseTypes";
 
 const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
@@ -35,7 +34,6 @@ export const purchaseService = {
 
     const allWithAmounts = all.map((data) => {
       const calculated: CalculateAmounts = {
-        purchaseDate: data.purchase_date,
         sameDayAmount: data.same_day_amount,
         plannedAmount: data.planned_amount,
         monthlyAmount: data.monthly_amount,
@@ -44,11 +42,7 @@ export const purchaseService = {
       const amounts = calculateTotalAmount(calculated);
       return {
         purchase: data,
-        amounts: {
-          totalAmount: amounts.totalAmount,
-          totalRealAmount: amounts.totalRealAmount,
-          oneMealCost: amounts.oneMealCost,
-        },
+        amounts,
       };
     });
     return allWithAmounts;

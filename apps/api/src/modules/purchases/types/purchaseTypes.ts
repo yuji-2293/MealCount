@@ -3,7 +3,6 @@
 // 内部関数の計算結果に使用する型
 
 export type CalculateAmounts = {
-  purchaseDate: string;
   sameDayAmount: number;
   plannedAmount: number;
   monthlyAmount: number;
@@ -14,11 +13,6 @@ export type PurchaseAmounts = {
   totalAmount: number;
   totalRealAmount: number;
   oneMealCost: number;
-};
-
-export type ReturnCalculatedAmounts = {
-  calculated: CalculateAmounts;
-  amounts: PurchaseAmounts;
 };
 
 export type Purchase = {
