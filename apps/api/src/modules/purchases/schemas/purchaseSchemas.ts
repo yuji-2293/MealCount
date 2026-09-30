@@ -9,4 +9,4 @@ export const purchaseSchema = z.object({
 });
 
 // purchaseSchema から型を自動的に推論して CreatePurchaseData 型を作成
-export type CreatePurchaseData = z.infer<typeof purchaseSchema>;
+export type PurchaseData = z.infer<typeof purchaseSchema>;
