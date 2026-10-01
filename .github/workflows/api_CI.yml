@@ -47,5 +47,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: pnpm format:check
-        run: pnpm format:check
+      - name: pnpm format:check:api
+        run: pnpm format:api:check
