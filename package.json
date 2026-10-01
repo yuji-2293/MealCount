@@ -13,7 +13,9 @@
     "format:api:check": "prettier --check apps/api",
     "format:web:check": "prettier --check apps/web",
     "lint:api": "eslint apps/api",
-    "lint:web": "eslint apps/web"
+    "lint:web": "eslint apps/web",
+    "typecheck:api": "tsc --noEmit -p apps/api/tsconfig.json",
+    "typecheck:web": "tsc --noEmit -p apps/web/tsconfig.json"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +25,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.10.0",
     "prettier": "^3.9.9",
+    "typescript": "~6.0.3",
     "typescript-eslint": "^8.69.0"
   }
 }
