@@ -127,4 +127,12 @@ export const purchaseService = {
       amounts,
     };
   },
+
+  deletePurchase: async (id: number, d1: D1Database) => {
+    const result = await purchaseRepository.delete(id, d1);
+    if (!result) {
+      return null;
+    }
+    return result;
+  },
 };

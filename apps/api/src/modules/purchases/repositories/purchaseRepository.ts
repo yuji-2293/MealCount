@@ -56,4 +56,13 @@ export const purchaseRepository = {
       .returning();
     return result;
   },
+
+  delete: async (id: number, d1: D1Database) => {
+    const db = drizzle(d1);
+    const [result] = await db
+      .delete(purchases)
+      .where(eq(purchases.id, id))
+      .returning();
+    return result;
+  },
 };
