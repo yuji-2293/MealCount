@@ -2,7 +2,7 @@ import type { Context } from "hono";
 import { purchaseService } from "@/modules/purchases/services/purchaseServices";
 import type { Bindings } from "@/types/bindings";
 import type {
-  GetPurchaseResponse,
+  PurchaseResponse,
   ErrorResponse,
 } from "@/modules/purchases/types/purchaseTypes";
 
@@ -10,7 +10,7 @@ type OutPutContext = Context<
   { Bindings: Bindings },
   any,
   {
-    out: { json: GetPurchaseResponse | ErrorResponse };
+    out: { json: PurchaseResponse | ErrorResponse };
   }
 >;
 

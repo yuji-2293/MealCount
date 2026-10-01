@@ -25,7 +25,16 @@ export const purchaseService = {
 
     const amounts = calculateTotalAmount(data);
     return {
-      result,
+      result: {
+        id: result.id,
+        purchaseDate: result.purchase_date,
+        sameDayAmount: result.same_day_amount,
+        plannedAmount: result.planned_amount,
+        monthlyAmount: result.monthly_amount,
+        purchasedMealCount: result.purchased_meal_count,
+        createdAt: result.created_at,
+        updatedAt: result.updated_at,
+      },
       amounts,
     };
   },

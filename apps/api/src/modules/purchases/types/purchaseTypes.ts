@@ -27,7 +27,7 @@ export type Purchase = {
 };
 
 // /GETレスポンスに使用する型
-export type GetPurchaseResponse = {
+export type PurchaseResponse = {
   purchase: Purchase;
   amounts: PurchaseAmounts;
 };

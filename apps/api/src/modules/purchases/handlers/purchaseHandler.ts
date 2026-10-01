@@ -16,13 +16,7 @@ type InputContext = Context<
 export const purchaseHandler = async (c: InputContext) => {
   // 必要な依存であるD1Databaseを取得
   const d1 = c.env.meal_count_db;
-
   const data = c.req.valid("json");
-
-  if (!data) {
-    return c.json({ error: "Bad Request" }, 400);
-  }
-
   const result = await purchaseService.createPurchase(data, d1);
   return c.json(result, 201);
 };
