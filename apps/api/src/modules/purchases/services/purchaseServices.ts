@@ -2,17 +2,13 @@
 import type {
   CreatePurchaseData,
   UpdatePurchaseData,
-} from "@/modules/purchases/schemas/purchaseSchemas";
-import type { D1Database } from "@cloudflare/workers-types";
-import { purchaseRepository } from "@/modules/purchases/repositories/purchaseRepository";
-import type {
-  PurchaseAmounts,
-  CalculateAmounts,
-} from "@/modules/purchases/types/purchaseTypes";
+} from '@/modules/purchases/schemas/purchaseSchemas';
+import type { D1Database } from '@cloudflare/workers-types';
+import { purchaseRepository } from '@/modules/purchases/repositories/purchaseRepository';
+import type { PurchaseAmounts, CalculateAmounts } from '@/modules/purchases/types/purchaseTypes';
 
 const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
-  const totalAmount =
-    data.sameDayAmount + data.plannedAmount + data.monthlyAmount;
+  const totalAmount = data.sameDayAmount + data.plannedAmount + data.monthlyAmount;
   const totalRealAmount = data.sameDayAmount + data.plannedAmount;
   const oneMealCost = totalRealAmount / data.purchasedMealCount;
   return {
@@ -97,11 +93,7 @@ export const purchaseService = {
     };
   },
 
-  updatePurchase: async (
-    id: number,
-    data: UpdatePurchaseData,
-    d1: D1Database,
-  ) => {
+  updatePurchase: async (id: number, data: UpdatePurchaseData, d1: D1Database) => {
     const result = await purchaseRepository.update(id, d1, data);
     if (!result) {
       return null;

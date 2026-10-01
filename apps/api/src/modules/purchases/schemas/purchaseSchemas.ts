@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const purchaseSchema = z.object({
   purchasedMealCount: z.number().positive().int(),

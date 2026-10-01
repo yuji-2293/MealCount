@@ -3,3 +3,7 @@ build
 pnpm-lock.yaml
 *.md
 eslint.config.mjs
+**/node_modules/**
+**/dist/**
+apps/api/drizzle/**
+apps/api/.wrangler/**
