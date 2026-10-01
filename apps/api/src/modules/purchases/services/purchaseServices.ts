@@ -1,5 +1,8 @@
 // schema から推論された型をimport
-import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
+import type {
+  CreatePurchaseData,
+  UpdatePurchaseData,
+} from "@/modules/purchases/schemas/purchaseSchemas";
 import type { D1Database } from "@cloudflare/workers-types";
 import { purchaseRepository } from "@/modules/purchases/repositories/purchaseRepository";
 import type {
@@ -38,6 +41,7 @@ export const purchaseService = {
       amounts,
     };
   },
+
   getAllPurchases: async (d1: D1Database) => {
     const all = await purchaseRepository.findAll(d1);
 
@@ -65,6 +69,7 @@ export const purchaseService = {
     });
     return allWithAmounts;
   },
+
   findPurchaseById: async (id: number, d1: D1Database) => {
     const data = await purchaseRepository.findById(id, d1);
     if (!data) {
@@ -87,6 +92,37 @@ export const purchaseService = {
         purchasedMealCount: data.purchased_meal_count,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
+      },
+      amounts,
+    };
+  },
+
+  updatePurchase: async (
+    id: number,
+    data: UpdatePurchaseData,
+    d1: D1Database,
+  ) => {
+    const result = await purchaseRepository.update(id, d1, data);
+    if (!result) {
+      return null;
+    }
+    const updateCalculated: CalculateAmounts = {
+      sameDayAmount: result.same_day_amount,
+      plannedAmount: result.planned_amount,
+      monthlyAmount: result.monthly_amount,
+      purchasedMealCount: result.purchased_meal_count,
+    };
+    const amounts = calculateTotalAmount(updateCalculated);
+    return {
+      result: {
+        id: result.id,
+        purchaseDate: result.purchase_date,
+        sameDayAmount: result.same_day_amount,
+        plannedAmount: result.planned_amount,
+        monthlyAmount: result.monthly_amount,
+        purchasedMealCount: result.purchased_meal_count,
+        createdAt: result.created_at,
+        updatedAt: result.updated_at,
       },
       amounts,
     };

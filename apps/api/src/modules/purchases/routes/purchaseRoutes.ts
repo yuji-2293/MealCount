@@ -1,17 +1,38 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import type { Bindings } from "@/types/bindings";
-import { findPurchaseHandler } from "@/modules/purchases/handlers/findPurchaseHandler";
-
-import { purchaseSchema } from "@/modules/purchases/schemas/purchaseSchemas";
-
-import { purchaseHandler } from "@/modules/purchases/handlers/purchaseHandler";
-import { getPurchaseHandler } from "@/modules/purchases/handlers/getPurchaseHandler";
+import { purchaseService } from "@/modules/purchases/services/purchaseServices";
+import { purchaseSchema, updatePurchaseSchema } from "@/modules/purchases/schemas/purchaseSchemas";
 
 const purchases = new Hono<{ Bindings: Bindings }>();
 purchases
-  .get("/", getPurchaseHandler)
-  .get("/:id", findPurchaseHandler)
-  .post("/", zValidator("json", purchaseSchema), purchaseHandler);
+  .get("/", async (c) => {
+    const d1 = c.env.meal_count_db;
+    const allPurchases = await purchaseService.getAllPurchases(d1);
+    return c.json(allPurchases, 200);
+  })
+
+  .get("/:id", async (c) => {
+    const d1 = c.env.meal_count_db;
+    const { id } = c.req.param();
+    const purchase = await purchaseService.findPurchaseById(Number(id), d1);
+    return c.json(purchase, 200);
+  })
+
+  .post("/", zValidator("json", purchaseSchema), async (c) => {
+    const d1 = c.env.meal_count_db;
+    const data = c.req.valid("json");
+    const result = await purchaseService.createPurchase(data, d1);
+    return c.json(result, 201);
+  })
+
+  .patch("/:id", zValidator("json", updatePurchaseSchema), async (c) => {
+    const d1 = c.env.meal_count_db;
+    const { id } = c.req.param();
+    const data = c.req.valid("json");
+    const result = await purchaseService.updatePurchase(Number(id), data, d1);
+    return c.json(result, 200);
+  })
+
 
 export default purchases;

@@ -25,19 +25,3 @@ export type Purchase = {
   createdAt: string;
   updatedAt: string;
 };
-
-// /GETレスポンスに使用する型
-export type PurchaseResponse = {
-  purchase: Purchase;
-  amounts: PurchaseAmounts;
-};
-
-// エラー形式に使用する型
-export type ErrorResponse = {
-  error: string;
-};
-
-// POST error
-export type PostErrorResponse = {
-  error: string;
-};
