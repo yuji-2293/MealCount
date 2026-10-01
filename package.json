@@ -8,7 +8,10 @@
     "api": "pnpm -F api dev",
     "web": "pnpm -F web dev",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:api": "prettier --write apps/api",
+    "format:web": "prettier --write apps/web",
+    "format:api:check": "prettier --check apps/api",
+    "format:web:check": "prettier --check apps/web",
     "lint:api": "eslint apps/api",
     "lint:web": "eslint apps/web"
   },
