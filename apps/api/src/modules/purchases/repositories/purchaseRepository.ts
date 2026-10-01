@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/d1";
 import type { D1Database } from "@cloudflare/workers-types";
 import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 import { purchases } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const purchaseRepository = {
   create: async (data: CreatePurchaseData, d1: D1Database) => {
@@ -27,5 +28,13 @@ export const purchaseRepository = {
     const db = drizzle(d1); // Local D1へのアクセス用
     const results = await db.select().from(purchases);
     return results;
+  },
+  findById: async (id: number, d1: D1Database) => {
+    const db = drizzle(d1);
+    const [result] = await db
+      .select()
+      .from(purchases)
+      .where(eq(purchases.id, id));
+    return result;
   },
 };

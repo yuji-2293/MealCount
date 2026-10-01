@@ -56,4 +56,30 @@ export const purchaseService = {
     });
     return allWithAmounts;
   },
+  findPurchaseById: async (id: number, d1: D1Database) => {
+    const data = await purchaseRepository.findById(id, d1);
+    if (!data) {
+      return null;
+    }
+    const calculated: CalculateAmounts = {
+      sameDayAmount: data.same_day_amount,
+      plannedAmount: data.planned_amount,
+      monthlyAmount: data.monthly_amount,
+      purchasedMealCount: data.purchased_meal_count,
+    };
+    const amounts = calculateTotalAmount(calculated);
+    return {
+      purchase: {
+        id: data.id,
+        purchaseDate: data.purchase_date,
+        sameDayAmount: data.same_day_amount,
+        plannedAmount: data.planned_amount,
+        monthlyAmount: data.monthly_amount,
+        purchasedMealCount: data.purchased_meal_count,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+      },
+      amounts,
+    };
+  },
 };
