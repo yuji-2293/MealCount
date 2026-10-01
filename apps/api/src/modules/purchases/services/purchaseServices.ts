@@ -28,7 +28,7 @@ export const purchaseService = {
 
     const amounts = calculateTotalAmount(data);
     return {
-      result: {
+      purchase: {
         id: result.id,
         purchaseDate: result.purchase_date,
         sameDayAmount: result.same_day_amount,
@@ -114,7 +114,7 @@ export const purchaseService = {
     };
     const amounts = calculateTotalAmount(updateCalculated);
     return {
-      result: {
+      purchase: {
         id: result.id,
         purchaseDate: result.purchase_date,
         sameDayAmount: result.same_day_amount,

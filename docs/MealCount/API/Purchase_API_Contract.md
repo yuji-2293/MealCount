@@ -53,7 +53,7 @@ Status:
 201 Created
 
 body:
-result:{
+purchase:{
   id,
   購入日,
   即日消費の合計金額(1),
@@ -89,7 +89,7 @@ Status:
 body:
 [
   {
-    result: {
+    purchase: {
       id,
       購入日,
       即日消費の合計金額,
@@ -121,7 +121,7 @@ body:
   200 OK
 
   body:
-  result: {
+  purchase: {
     id,
     購入日,
     即日消費の合計金額,
@@ -165,7 +165,7 @@ body:
   200 OK
 
   body:
-  result: {
+  purchase: {
     id,
     購入日,
     即日消費の合計金額,
