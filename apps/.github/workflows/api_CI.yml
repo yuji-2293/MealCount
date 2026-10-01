@@ -5,16 +5,11 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "apps/**"
+      - "apps/api/**"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - "pnpm-lock.yaml"
       - ".github/workflows/api_CI.yml"
-  push:
-    branches: [main]
-    paths:
-      - "apps/**"
-      - ".github/workflows/api_CI.yml"
-defaults:
-  run:
-    working-directory: ./apps/api
 
 env:
   PNPM_VERSION: "10.13.1"
@@ -34,3 +29,40 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+  lint:
+    needs: Launch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: pnpm lint
+        run: pnpm lint
+  format:
+    needs: Launch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: pnpm format:check
+        run: pnpm format:check
