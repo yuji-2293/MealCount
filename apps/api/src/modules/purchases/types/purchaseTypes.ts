@@ -31,3 +31,13 @@ export type GetPurchaseResponse = {
   purchase: Purchase;
   amounts: PurchaseAmounts;
 };
+
+// エラー形式に使用する型
+export type ErrorResponse = {
+  error: string;
+};
+
+// POST error
+export type PostErrorResponse = {
+  error: string;
+};

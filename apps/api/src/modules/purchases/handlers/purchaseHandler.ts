@@ -1,14 +1,14 @@
 import { purchaseService } from "@/modules/purchases/services/purchaseServices";
 import type { Context } from "hono";
-import type { PurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
+import type { CreatePurchaseData } from "@/modules/purchases/schemas/purchaseSchemas";
 import type { Bindings } from "@/types/bindings";
 // Handlerでcontextの型を指定するためのInputContextを定義
 type InputContext = Context<
   { Bindings: Bindings },
   any,
   {
-    in: { json: PurchaseData };
-    out: { json: PurchaseData };
+    in: { json: CreatePurchaseData };
+    out: { json: CreatePurchaseData };
   } // Input and Output types
 >;
 
@@ -18,6 +18,11 @@ export const purchaseHandler = async (c: InputContext) => {
   const d1 = c.env.meal_count_db;
 
   const data = c.req.valid("json");
+
+  if (!data) {
+    return c.json({ error: "Bad Request" }, 400);
+  }
+
   const result = await purchaseService.createPurchase(data, d1);
   return c.json(result, 201);
 };

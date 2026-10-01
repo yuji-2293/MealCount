@@ -3,12 +3,12 @@
 ## Honoの内部型定義
 ```
 // Hono内部の型定義（イメージ）
-class Context<
+Context<
   E extends Env = any,  // 第1型引数
   P extends string = any,
   I extends Input = {}
 > {
-  env: E["Bindings"];  // ← ここがポイント！
+  env: E["Bindings"];
   // ...
 }
 ```
