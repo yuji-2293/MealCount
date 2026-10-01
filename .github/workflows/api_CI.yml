@@ -15,23 +15,7 @@ env:
   PNPM_VERSION: "10.13.1"
 
 jobs:
-  Launch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Install dependencies
-        run: pnpm install
-
   lint:
-    needs: Launch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -44,12 +28,11 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: pnpm lint
-        run: pnpm lint
+        run: pnpm lint:api
   format:
-    needs: Launch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -62,7 +45,7 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: pnpm format:check
         run: pnpm format:check

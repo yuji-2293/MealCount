@@ -9,7 +9,8 @@
     "web": "pnpm -F web dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint ."
+    "lint:api": "eslint apps/api",
+    "lint:web": "eslint apps/web"
   },
   "keywords": [],
   "author": "",
