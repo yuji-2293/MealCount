@@ -4,10 +4,16 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/web/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/web_CD.yml'
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '10.13.1'
-  PROJECT_NAME: 'name=mealcount-web'
+  PROJECT_NAME: 'mealcount-web'
 
 jobs:
   deploy:
@@ -15,15 +21,30 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
       - name: Build web
         run: pnpm -F web build
-      - name: Deploy web
-        run: |
-          pnpm exec wrangler pages deploy apps/web/dist \
-          --project-name=${{ env.PROJECT_NAME }}
+
+      - name: deploy web
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: |
+            pnpm exec wrangler pages deploy apps/web/dist \
+            --project-name=${{ env.PROJECT_NAME }}
