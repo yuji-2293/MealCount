@@ -46,5 +46,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: |
-            pnpm exec wrangler pages deploy apps/web/dist \
+            pages deploy apps/web/dist \
             --project-name=${{ env.PROJECT_NAME }}
