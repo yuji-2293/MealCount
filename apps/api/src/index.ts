@@ -4,7 +4,7 @@ import type { Bindings } from '@/types/bindings';
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.get('/', (c) => {
-  return c.json({ message: 'success CD deployment!' });
+  return c.json({ message: 'success' });
 });
 
 app.route('/purchases', purchases);
