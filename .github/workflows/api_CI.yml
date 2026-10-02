@@ -54,8 +54,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
-
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -72,6 +70,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
       - name: Setup PNPM
         uses: pnpm/action-setup@v6
         with:
@@ -83,8 +82,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

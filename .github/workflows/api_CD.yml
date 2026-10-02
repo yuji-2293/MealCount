@@ -15,7 +15,6 @@ on:
 env:
   PNPM_VERSION: '10.13.1'
   NODE_VERSION: '22'
-  API_URL: 'https://api.mealcount-api.workers.dev'
 jobs:
   deploy:
     runs-on: ubuntu-latest
