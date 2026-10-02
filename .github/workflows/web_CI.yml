@@ -10,7 +10,7 @@ on:
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
-      - 'eslint.config.js'
+      - 'eslint.config.mjs'
 
 env:
   NODE_VERSION: '22'
@@ -30,7 +30,7 @@ jobs:
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
@@ -38,9 +38,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      - run: pnpm lint
-        env:
-          DEBUG_MESSAGE: ${{ env.DEBUG_MESSAGE }}
+      - name: Lint web
+        run: pnpm lint:web
   format:
     runs-on: ubuntu-latest
     steps:
@@ -94,7 +93,7 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck:web
 
-  unit_test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -115,5 +114,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Run unit tests
-        run: pnpm test --run
+
+      - name: Build web
+        run: pnpm build:web

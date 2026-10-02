@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "api": "pnpm -F api dev",
     "web": "pnpm -F web dev",
+    "build:web": "pnpm -F web build",
     "format": "prettier --write .",
     "format:api": "prettier --write apps/api",
     "format:web": "prettier --write apps/web",
@@ -24,6 +25,9 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.10.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.6",
+    "globals": "^17.12.0",
     "prettier": "^3.9.9",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.69.0"
