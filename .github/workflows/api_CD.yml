@@ -15,7 +15,6 @@ on:
 env:
   PNPM_VERSION: '10.13.1'
   NODE_VERSION: '22'
-  PROJECT_NAME: 'api'
 
 jobs:
   deploy:
