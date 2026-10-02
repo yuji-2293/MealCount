@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import { defineConfig, globalIgnores } from "eslint/config";
+import { defineConfig} from "eslint/config";
 import tseslint from "typescript-eslint";
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -16,8 +16,11 @@ export default defineConfig(
   },
   // api lint設定
   {
-    files: ["apps/**/*.{ts,tsx}"],
+    files: ["apps/api/**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tseslint.configs.recommended],
+        parserOptions: {
+      tsconfigRootDir: import.meta.dirname,
+    },
   },
   // web lint設定
   {
@@ -27,6 +30,9 @@ export default defineConfig(
       reactRefresh.configs.vite],
     languageOptions: {
       globals: globals.browser,
+    parserOptions: {
+      tsconfigRootDir: import.meta.dirname,
+    },
     },
   },
 );
