@@ -13,7 +13,9 @@ on:
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '10.13.1'
-  API_BASE_URL: 'https://api.mealcount-api.workers.dev'
+  PROJECT_NAME: 'mealcount-web'
+  API_BASE_URL: 'https://api.mealcount-workersdev.workers.dev'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -45,4 +47,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: |
-            pages deploy apps/web/dist --project-name=${{ env.PROJECT_NAME }}
+            pages deploy apps/web/dist --project-name=${{ env.PROJECT_NAME }} --api-base-url=${{ env.API_BASE_URL }}
