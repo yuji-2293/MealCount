@@ -4,8 +4,7 @@ import type { Bindings } from '@/types/bindings';
 import { purchaseService } from '@/modules/purchases/services/purchaseServices';
 import { purchaseSchema, updatePurchaseSchema } from '@/modules/purchases/schemas/purchaseSchemas';
 
-const purchases = new Hono<{ Bindings: Bindings }>();
-purchases
+const purchases = new Hono<{ Bindings: Bindings }>()
   .get('/', async (c) => {
     const d1 = c.env.meal_count_db;
     const allPurchases = await purchaseService.getAllPurchases(d1);
