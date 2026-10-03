@@ -6,6 +6,7 @@ export const PurchasesIndex = () => {
     <div>
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
+
       {purchases?.map((purchase) => (
         <div key={purchase.purchase.id}>
           <p>Purchase ID: {purchase.purchase.id}</p>

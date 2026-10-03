@@ -1,5 +1,5 @@
 import { PurchasesIndex } from './features/purchases/components/PurchasesIndex';
-import { PurchaseCreate } from './features/purchases/components/purchaseCreate';
+import { PurchaseCreate } from './features/purchases/components/PurchaseCreate';
 function App() {
   return (
     <>
