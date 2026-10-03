@@ -6,6 +6,9 @@ const client = hc<AppType>('http://localhost:8787');
 const res = await client.index.$get();
 console.log(res);
 
+const data = await client.purchases.$get();
+console.log(data);
+
 function App() {
   return (
     <>

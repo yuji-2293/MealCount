@@ -1,9 +1,9 @@
 import { drizzle } from 'drizzle-orm/d1';
 import type { D1Database } from '@cloudflare/workers-types';
-import type { CreatePurchaseData } from '@/modules/purchases/schemas/purchaseSchemas';
-import { purchases } from '@/db/schema';
+import type { CreatePurchaseData } from '../schemas/purchaseSchemas';
+import { purchases } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
-import type { UpdatePurchaseData } from '@/modules/purchases/schemas/purchaseSchemas';
+import type { UpdatePurchaseData } from '../schemas/purchaseSchemas';
 export const purchaseRepository = {
   create: async (data: CreatePurchaseData, d1: D1Database) => {
     const db = drizzle(d1); // Local D1へのアクセス用

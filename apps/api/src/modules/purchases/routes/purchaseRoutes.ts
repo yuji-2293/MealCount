@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import type { Bindings } from '@/types/bindings';
-import { purchaseService } from '@/modules/purchases/services/purchaseServices';
-import { purchaseSchema, updatePurchaseSchema } from '@/modules/purchases/schemas/purchaseSchemas';
+import type { Bindings } from '../../../types/bindings';
+import { purchaseService } from '../services/purchaseServices';
+import { purchaseSchema, updatePurchaseSchema } from '../schemas/purchaseSchemas';
 
 const purchases = new Hono<{ Bindings: Bindings }>()
   .get('/', async (c) => {

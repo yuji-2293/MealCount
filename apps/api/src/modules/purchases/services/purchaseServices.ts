@@ -1,11 +1,8 @@
 // schema から推論された型をimport
-import type {
-  CreatePurchaseData,
-  UpdatePurchaseData,
-} from '@/modules/purchases/schemas/purchaseSchemas';
+import type { CreatePurchaseData, UpdatePurchaseData } from '../schemas/purchaseSchemas';
 import type { D1Database } from '@cloudflare/workers-types';
-import { purchaseRepository } from '@/modules/purchases/repositories/purchaseRepository';
-import type { PurchaseAmounts, CalculateAmounts } from '@/modules/purchases/types/purchaseTypes';
+import { purchaseRepository } from '../repositories/purchaseRepository';
+import type { PurchaseAmounts, CalculateAmounts } from '../types/purchaseTypes';
 
 const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
   const totalAmount = data.sameDayAmount + data.plannedAmount + data.monthlyAmount;
