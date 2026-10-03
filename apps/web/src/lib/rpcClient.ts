@@ -1,6 +1,6 @@
 import type { AppType } from '../../../api/src';
 import { hc } from 'hono/client';
 
-const client = hc<AppType>('http://localhost:8787');
+const client = hc<AppType>(import.meta.env.VITE_API_BASE_URL);
 
 export default client;
