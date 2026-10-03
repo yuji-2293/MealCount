@@ -7,18 +7,12 @@ Client
   │ POST /purchases
   │ JSON
   ▼
-Route
-  │
-  ▼
-zValidator
+Route / zValidator / handler
   │ purchaseSchemaで検証
-  │
+  │ 検証済みなJSONデータを取得
+  │ Contextから必要な値を取り出す
   ▼
-Handler
-  │ c.req.valid("json")
-  │ c.env.meal_count_db
-  │
-  ▼
+
 Purchase Service
   │
   ├── Purchaseの計算
@@ -56,10 +50,9 @@ Client
 
 ## 責務分離
 - Client: ユーザーからのリクエストを受け取る
-- Route: リクエストを適切なハンドラーにルーティングする
-- zValidator: リクエストのバリデーションを行う
-- Handler: リクエストを処理し、レスポンスを返す
-  - 不正なアクセスはここで弾く
+- Route: リクエストを適切なハンドラーにルーティングする /
+  zValidator: リクエストのバリデーションを行う /
+  Handler: リクエストを処理し、レスポンスを返す
 - Purchase Service: ビジネスロジックを担当する
 - Purchase Repository: データベースとのやり取りを担当する
 - Drizzle: ORMとしてデータベース操作を担当する

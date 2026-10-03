@@ -42,11 +42,6 @@ purchase:{
     １食単価
   },
 
-[Error]
-400 Bad Request
-{
-  error: 'Invalid request'
-}
 ```
 ---
 
