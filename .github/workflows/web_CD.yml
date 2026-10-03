@@ -14,7 +14,7 @@ env:
   NODE_VERSION: '22'
   PNPM_VERSION: '10.13.1'
   PROJECT_NAME: 'mealcount-web'
-  API_BASE_URL: 'https://api.mealcount-workersdev.workers.dev'
+  VITE_API_BASE_URL: 'https://api.mealcount-workersdev.workers.dev'
 
 jobs:
   deploy:
