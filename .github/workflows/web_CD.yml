@@ -47,4 +47,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: |
-            pages deploy apps/web/dist --project-name=${{ env.PROJECT_NAME }} --api-base-url=${{ env.API_BASE_URL }}
+            pages deploy apps/web/dist --project-name=${{ env.PROJECT_NAME }}
