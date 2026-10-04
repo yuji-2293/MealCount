@@ -1,7 +1,7 @@
 import { usePostPurchase } from '../hooks/useCreatePurchase';
 import { useState } from 'react';
 
-export const PurchaseCreate = () => {
+export const PurchasesCreate = () => {
   const [plannedAmount, setPlannedAmount] = useState<number>(0);
   const [sameDayAmount, setSameDayAmount] = useState<number>(0);
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0);

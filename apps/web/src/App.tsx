@@ -1,11 +1,11 @@
 import { PurchasesIndex } from './features/purchases/components/PurchasesIndex';
-import { PurchaseCreate } from './features/purchases/components/PurchaseCreate';
+import { PurchasesCreate } from './features/purchases/components/PurchasesCreate';
 function App() {
   return (
     <>
       <h1>success!!</h1>
       <PurchasesIndex />
-      <PurchaseCreate />
+      <PurchasesCreate />
     </>
   );
 }
