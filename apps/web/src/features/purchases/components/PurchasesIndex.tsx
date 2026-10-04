@@ -1,7 +1,8 @@
 import { usePurchases } from '../hooks/usePurchases';
 
 export const PurchasesIndex = () => {
-  const { purchases, isLoading, error } = usePurchases();
+  const { purchases, query } = usePurchases();
+  const { isLoading, error } = query;
   return (
     <div>
       {isLoading && <p>Loading...</p>}

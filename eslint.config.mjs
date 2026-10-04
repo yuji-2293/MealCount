@@ -19,8 +19,10 @@ export default defineConfig(
   {
     files: ["apps/api/**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tseslint.configs.recommended],
-        parserOptions: {
-      tsconfigRootDir: import.meta.dirname,
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
   // web lint設定
@@ -29,7 +31,7 @@ export default defineConfig(
     extends: [js.configs.recommended, tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
-      queryPlugin.configs.recommended
+      ...queryPlugin.configs['flat/recommended']
     ],
     languageOptions: {
       globals: globals.browser,

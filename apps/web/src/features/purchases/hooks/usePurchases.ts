@@ -4,11 +4,9 @@ import fetchPurchases from '../api/fetchPurchases';
 export const usePurchases = () => {
   const query = useQuery({
     queryKey: ['purchases'],
-    queryFn: fetchPurchases(),
+    queryFn: fetchPurchases,
   });
 
   const purchases = query.data;
-
-  console.log(purchases);
-  return { ...query, purchases };
+  return { purchases, query };
 };
