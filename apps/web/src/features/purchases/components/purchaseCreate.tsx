@@ -10,12 +10,12 @@ export const PurchaseCreate = () => {
 
   const { mutate } = usePostPurchase();
   const handleCreatePurchase = () => {
-        mutate({
-        plannedAmount,
-        sameDayAmount,
-        monthlyAmount,
-        purchasedMealCount,
-        purchaseDate,
+    mutate({
+      plannedAmount,
+      sameDayAmount,
+      monthlyAmount,
+      purchasedMealCount,
+      purchaseDate,
     });
   };
 
