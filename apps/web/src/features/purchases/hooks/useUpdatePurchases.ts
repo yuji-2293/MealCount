@@ -1,10 +1,10 @@
-import deletePurchase from '../api/deletePurchase';
+import updatePurchase from '../api/updatePurchase';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export function useDeletePurchases() {
+export function useUpdatePurchases() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: deletePurchase,
+    mutationFn: updatePurchase,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
     },
