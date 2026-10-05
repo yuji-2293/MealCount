@@ -3,10 +3,11 @@ import { useDeletePurchases } from '../hooks/useDeletePurchases';
 import { useUpdatePurchases } from '../hooks/useUpdatePurchases';
 import { useState } from 'react';
 import fetchPurchases from '../api/fetchPurchases';
+import { toast } from 'sonner';
 
 export const PurchasesIndex = () => {
   const { purchases, query } = usePurchases();
-  const { isLoading, error } = query;
+  const { isLoading, error, isPending } = query;
   const { mutate } = useDeletePurchases();
   const { mutate: updateMutate } = useUpdatePurchases();
 
@@ -30,30 +31,51 @@ export const PurchasesIndex = () => {
   };
 
   const handleUpdate = (id: number) => {
-    updateMutate({
-      json: {
-        plannedAmount,
-        sameDayAmount,
-        monthlyAmount,
-        purchasedMealCount,
-        purchaseDate,
+    updateMutate(
+      {
+        json: {
+          plannedAmount,
+          sameDayAmount,
+          monthlyAmount,
+          purchasedMealCount,
+          purchaseDate,
+        },
+        param: {
+          id: String(id),
+        },
       },
-      param: {
-        id: String(id),
-      },
-    });
-    setEditId(null);
+      {
+        onSuccess: () => {
+          setEditId(null);
+          toast.success('更新に成功しました');
+        },
+        onError: () => {
+          toast.error('更新に失敗しました');
+        },
+      }
+    );
   };
 
   const handleDelete = (id: number) => {
-    mutate({
-      id: String(id),
-    });
+    mutate(
+      {
+        id: String(id),
+      },
+      {
+        onSuccess: () => {
+          toast.success('削除に成功しました');
+        },
+        onError: () => {
+          toast.error('削除に失敗しました');
+        },
+      }
+    );
   };
 
   return (
     <div>
       {isLoading && <p>Loading...</p>}
+      {isPending && <p>Updating...</p>}
       {error && <p>Error: {error.message}</p>}
 
       {purchases?.map((purchase) => (
@@ -67,7 +89,9 @@ export const PurchasesIndex = () => {
             <p>purchase Date: {purchase.purchase.purchaseDate}</p>
             <div className="buttons">
               <button onClick={() => handleEdit(purchase)}>edit</button>
-              <button onClick={() => handleDelete(purchase.purchase.id)}>削除するよ</button>
+              <button onClick={() => handleDelete(purchase.purchase.id)} disabled={isPending}>
+                削除するよ
+              </button>
             </div>
             {editId === purchase.purchase.id && (
               <div className="edit-fields">
@@ -96,7 +120,9 @@ export const PurchasesIndex = () => {
                   value={purchaseDate}
                   onChange={(e) => setPurchaseDate(e.target.value)}
                 />
-                <button onClick={() => handleUpdate(purchase.purchase.id)}>更新するよ</button>
+                <button onClick={() => handleUpdate(purchase.purchase.id)} disabled={isPending}>
+                  更新するよ
+                </button>
               </div>
             )}
           </div>

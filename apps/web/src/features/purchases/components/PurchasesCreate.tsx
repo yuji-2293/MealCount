@@ -1,5 +1,6 @@
 import { usePostPurchase } from '../hooks/useCreatePurchase';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export const PurchasesCreate = () => {
   const [plannedAmount, setPlannedAmount] = useState<number>(0);
@@ -8,15 +9,25 @@ export const PurchasesCreate = () => {
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
 
-  const { mutate } = usePostPurchase();
+  const { mutate, isPending, error } = usePostPurchase();
   const handleCreatePurchase = () => {
-    mutate({
-      plannedAmount,
-      sameDayAmount,
-      monthlyAmount,
-      purchasedMealCount,
-      purchaseDate,
-    });
+    mutate(
+      {
+        plannedAmount,
+        sameDayAmount,
+        monthlyAmount,
+        purchasedMealCount,
+        purchaseDate,
+      },
+      {
+        onSuccess: () => {
+          toast.success('作成に成功しました');
+        },
+        onError: () => {
+          toast.error('作成に失敗しました');
+        },
+      }
+    );
   };
 
   return (
@@ -51,7 +62,9 @@ export const PurchasesCreate = () => {
         onChange={(e) => setPurchaseDate(e.target.value)}
         placeholder="Purchase Date"
       />
-      <button onClick={handleCreatePurchase}>Create Purchase</button>
+      <button onClick={handleCreatePurchase} disabled={isPending || !!error}>
+        Create Purchase
+      </button>
     </div>
   );
 };
