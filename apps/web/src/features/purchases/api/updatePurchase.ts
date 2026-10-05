@@ -1,17 +1,11 @@
 import client from '../../../lib/rpcClient';
 import type { InferRequestType } from 'hono/client';
 const $patch = client.purchases[':id'].$patch;
-type UpdatePurchaseParams = InferRequestType<typeof $patch>['json'];
-type UpdatePurchaseParam = InferRequestType<typeof $patch>['param'];
+type UpdatePurchaseParams = InferRequestType<typeof $patch>;
 
-type UpdatePurchaseResult = {
-  data: UpdatePurchaseParams;
-  param: UpdatePurchaseParam;
-};
-
-export default async function updatePurchase({ data, param }: UpdatePurchaseResult) {
+export default async function updatePurchase({ json, param }: UpdatePurchaseParams) {
   const result = await $patch({
-    json: data,
+    json,
     param,
   });
   if (!result.ok) {
