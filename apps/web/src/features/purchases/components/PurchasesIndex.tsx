@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 
 export const PurchasesIndex = () => {
   const { purchases, query } = usePurchases();
-  const { isLoading, error, isPending } = query;
-  const { mutate } = useDeletePurchases();
-  const { mutate: updateMutate } = useUpdatePurchases();
+  const { isLoading, error } = query;
+  const { mutate, isPending: isDeletePending } = useDeletePurchases();
+  const { mutate: updateMutate, isPending: isUpdatePending } = useUpdatePurchases();
 
   const [plannedAmount, setPlannedAmount] = useState<number>(0);
   const [sameDayAmount, setSameDayAmount] = useState<number>(0);
@@ -75,7 +75,7 @@ export const PurchasesIndex = () => {
   return (
     <div>
       {isLoading && <p>Loading...</p>}
-      {isPending && <p>Updating...</p>}
+      {isUpdatePending && <p>Updating...</p>}
       {error && <p>Error: {error.message}</p>}
 
       {purchases?.map((purchase) => (
@@ -89,7 +89,7 @@ export const PurchasesIndex = () => {
             <p>purchase Date: {purchase.purchase.purchaseDate}</p>
             <div className="buttons">
               <button onClick={() => handleEdit(purchase)}>edit</button>
-              <button onClick={() => handleDelete(purchase.purchase.id)} disabled={isPending}>
+              <button onClick={() => handleDelete(purchase.purchase.id)} disabled={isDeletePending}>
                 削除するよ
               </button>
             </div>
@@ -120,7 +120,10 @@ export const PurchasesIndex = () => {
                   value={purchaseDate}
                   onChange={(e) => setPurchaseDate(e.target.value)}
                 />
-                <button onClick={() => handleUpdate(purchase.purchase.id)} disabled={isPending}>
+                <button
+                  onClick={() => handleUpdate(purchase.purchase.id)}
+                  disabled={isUpdatePending}
+                >
                   更新するよ
                 </button>
               </div>

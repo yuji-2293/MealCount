@@ -9,7 +9,7 @@ export const PurchasesCreate = () => {
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
 
-  const { mutate, isPending, error } = usePostPurchase();
+  const { mutate, isPending } = usePostPurchase();
   const handleCreatePurchase = () => {
     mutate(
       {
@@ -62,7 +62,7 @@ export const PurchasesCreate = () => {
         onChange={(e) => setPurchaseDate(e.target.value)}
         placeholder="Purchase Date"
       />
-      <button onClick={handleCreatePurchase} disabled={isPending || !!error}>
+      <button onClick={handleCreatePurchase} disabled={isPending}>
         Create Purchase
       </button>
     </div>
