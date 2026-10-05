@@ -1,9 +1,11 @@
 import { usePurchases } from '../hooks/usePurchases';
 import { useDeletePurchases } from '../hooks/useDeletePurchases';
+import { useUpdatePurchases } from '../hooks/useUpdatePurchases';
 export const PurchasesIndex = () => {
   const { purchases, query } = usePurchases();
   const { isLoading, error } = query;
   const { mutate } = useDeletePurchases();
+  const { mutate: updateMutate } = useUpdatePurchases();
 
   const handleDelete = (id: number) => {
     mutate({
