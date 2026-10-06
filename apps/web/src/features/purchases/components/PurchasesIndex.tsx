@@ -1,6 +1,6 @@
 import { usePurchases } from '../hooks/usePurchases';
-import { useDeletePurchases } from '../hooks/useDeletePurchases';
-import { useUpdatePurchases } from '../hooks/useUpdatePurchases';
+import { useDeletePurchase } from '../hooks/useDeletePurchase';
+import { useUpdatePurchase } from '../hooks/useUpdatePurchase';
 import { useState } from 'react';
 import fetchPurchases from '../api/fetchPurchases';
 import { toast } from 'sonner';
@@ -8,8 +8,8 @@ import { toast } from 'sonner';
 export const PurchasesIndex = () => {
   const { purchases, query } = usePurchases();
   const { isLoading, error } = query;
-  const { mutate, isPending: isDeletePending } = useDeletePurchases();
-  const { mutate: updateMutate, isPending: isUpdatePending } = useUpdatePurchases();
+  const { mutate, isPending: isDeletePending } = useDeletePurchase();
+  const { mutate: updateMutate, isPending: isUpdatePending } = useUpdatePurchase();
 
   const [plannedAmount, setPlannedAmount] = useState<number>(0);
   const [sameDayAmount, setSameDayAmount] = useState<number>(0);

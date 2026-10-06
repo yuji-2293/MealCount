@@ -1,15 +1,15 @@
-import { usePostPurchase } from '../hooks/useCreatePurchase';
+import { useCreatePurchase } from '../hooks/useCreatePurchase';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export const PurchasesCreate = () => {
+export const PurchaseCreateForm = () => {
   const [plannedAmount, setPlannedAmount] = useState<number>(0);
   const [sameDayAmount, setSameDayAmount] = useState<number>(0);
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0);
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
 
-  const { mutate, isPending } = usePostPurchase();
+  const { mutate, isPending } = useCreatePurchase();
   const handleCreatePurchase = () => {
     mutate(
       {

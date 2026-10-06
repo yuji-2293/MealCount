@@ -1,7 +1,7 @@
 import updatePurchase from '../api/updatePurchase';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export function useUpdatePurchases() {
+export function useUpdatePurchase() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: updatePurchase,
