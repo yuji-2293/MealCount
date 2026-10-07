@@ -86,6 +86,9 @@ export const PurchasesIndex = () => {
             <p>same Day Amount: {purchase.purchase.sameDayAmount}</p>
             <p>monthly Amount: {purchase.purchase.monthlyAmount}</p>
             <p>purchased Meal Count: {purchase.purchase.purchasedMealCount}</p>
+            <p>totalAmount: {purchase.amounts.totalAmount}</p>
+            <p>total Real Amount: {purchase.amounts.totalRealAmount}</p>
+            <p>one Meal Cost: {purchase.amounts.oneMealCost}</p>
             <p>purchase Date: {purchase.purchase.purchaseDate}</p>
             <div className="buttons">
               <button onClick={() => handleEdit(purchase)}>edit</button>
