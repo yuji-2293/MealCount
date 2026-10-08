@@ -1,5 +1,5 @@
 import { PurchasesIndex } from './features/purchases/components/PurchasesIndex';
-import { PurchasesCreate } from './features/purchases/components/PurchasesCreate';
+import { PurchaseCreateForm } from './features/purchases/components/PurchaseCreateForm';
 import { Toaster } from './components/ui/sonner';
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
 
       <h1>success!!</h1>
       <PurchasesIndex />
-      <PurchasesCreate />
+      <PurchaseCreateForm />
     </>
   );
 }

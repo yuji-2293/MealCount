@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import type { Bindings } from '../../../types/bindings';
-import { purchaseService } from '../services/purchaseServices';
+import { purchaseService } from '../services/purchaseService';
 import { purchaseSchema, updatePurchaseSchema } from '../schemas/purchaseSchemas';
 
 const purchases = new Hono<{ Bindings: Bindings }>()
