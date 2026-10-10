@@ -21,3 +21,18 @@ export const purchases = sqliteTable(
     check('meal_count_positive_check', sql`${table.purchased_meal_count} > 0`),
   ]
 );
+
+export const mealStockTable = sqliteTable(
+  'meal_stock',
+  {
+    id: integer('id').primaryKey(),
+    daily_meal_count: integer('daily_meal_count').notNull().default(3),
+    current_meal_stock: integer('current_meal_stock').notNull().default(0),
+    last_calculated_at: text('last_calculated_at').notNull(),
+    updated_at: text('updated_at').notNull(),
+  },
+  (table) => [
+    check('current_meal_stock_nonnegative', sql`${table.current_meal_stock} >= 0`),
+    check('daily_meal_count_nonnegative', sql`${table.daily_meal_count} >= 0`),
+  ]
+);
