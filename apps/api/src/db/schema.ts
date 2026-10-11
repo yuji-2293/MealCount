@@ -28,7 +28,7 @@ export const mealStockTable = sqliteTable(
     id: integer('id').primaryKey(),
     daily_meal_count: integer('daily_meal_count').notNull().default(3),
     current_meal_stock: integer('current_meal_stock').notNull().default(0),
-    last_calculated_at: text('last_calculated_at').notNull(),
+    last_calculated_date: text('last_calculated_date').notNull(),
     updated_at: text('updated_at').notNull(),
   },
   (table) => [
