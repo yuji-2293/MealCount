@@ -174,7 +174,7 @@ MealStockでは、日々の消費を都度DBへ書き込まず、GET時に現在
 
 ```text
 currentMealStock
-lastCalculatedAt
+lastCalculatedDate
 ```
 
 を更新し、新しい基準点とする。

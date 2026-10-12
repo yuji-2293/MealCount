@@ -22,7 +22,7 @@ export const purchases = sqliteTable(
   ]
 );
 
-export const mealStockTable = sqliteTable(
+export const mealStock = sqliteTable(
   'meal_stock',
   {
     id: integer('id').primaryKey(),
