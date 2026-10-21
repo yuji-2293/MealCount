@@ -16,9 +16,9 @@ export const mealStockRepository = {
     const [result] = await db
       .update(mealStock)
       .set({
-        daily_meal_count: data.dailyMealCount,
         current_meal_stock: data.currentMealStock,
         last_calculated_date: now,
+        updated_at: now,
       })
       .where(eq(mealStock.id, id))
       .returning();
