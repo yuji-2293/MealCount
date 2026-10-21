@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
 export const mealStockSchema = z.object({
-  dailyMealCount: z.number().min(0),
-  currentMealStock: z.number().min(0),
-  lastCalculatedDate: z.string(),
+  currentMealStock: z.number().int().min(0),
 });
 
 export type UpdateMealStockData = z.infer<typeof mealStockSchema>;
