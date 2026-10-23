@@ -70,7 +70,12 @@ currentMealStock = 25
 
 ## GET /meal-stock
 
+### 責務
 GET時には、DBに保存されている `currentMealStock` をそのまま返さず、経過日数分の消費を計算する。
+GET = [ ユーザーにとって推定される現在の在庫食数 ]  
+DBは更新しない  
+
+
 
 ```text
 elapsedDays
