@@ -2,6 +2,7 @@ import type { D1Database } from '@cloudflare/workers-types';
 import { mealStockRepository } from '../repositories/mealStockRepository';
 import { getTodayJST } from '../../../utils/date';
 import type { UpdateMealStockData } from '../schemas/mealStockSchemas';
+import { calculateEstimatedStock } from '../functions/calculateEstimatedStock';
 
 export const mealStockServices = {
   getMealStockById: async (d1: D1Database, id: number) => {
@@ -10,21 +11,16 @@ export const mealStockServices = {
     if (!data) {
       throw new Error(`Meal stock with id ${id} not found`);
     }
-    const now = new Date(getTodayJST());
-    const lastCalculatedDate = data.last_calculated_date;
-    const elapsedDays = Math.max(
-      0,
-      Math.floor((now.getTime() - new Date(lastCalculatedDate).getTime()) / (1000 * 60 * 60 * 24))
-    );
-    // currentMealStock 取得処理
-    const currentMealStock = Math.max(
-      0,
-      data.current_meal_stock - data.daily_meal_count * elapsedDays
+    // 共通関数にdataを渡して推定在庫を計算
+    const { elapsedDays, estimatedStock } = calculateEstimatedStock(
+      data.last_calculated_date,
+      data.current_meal_stock,
+      data.daily_meal_count
     );
     return {
       ...data,
       elapsedDays,
-      currentMealStock,
+      estimatedStock,
     };
   },
   updateMealStock: async (d1: D1Database, id: number, data: UpdateMealStockData) => {
@@ -33,11 +29,25 @@ export const mealStockServices = {
       throw new Error(`Meal stock with id ${id} not found`);
     }
 
+    const { calculatedStock } = calculateEstimatedStock(
+      existingData.last_calculated_date,
+      existingData.current_meal_stock,
+      existingData.daily_meal_count
+    );
+
+    // 更新用のdataから補正値を計算する
+    // actualMealCount が指定されていれば,デフォルトの daily_meal_count との差分を補正値とする
+    const adjustment =
+      data.actualMealCount === undefined ? 0 : existingData.daily_meal_count - data.actualMealCount;
+
+    // 補正値を在庫に反映
+    const confirmedStock = data.currentMealStock ?? Math.max(0, calculatedStock + adjustment);
+
     const result = await mealStockRepository.update(
       id,
 
       {
-        currentMealStock: data.currentMealStock,
+        currentMealStock: confirmedStock,
         lastCalculatedDate: getTodayJST(),
       },
 
