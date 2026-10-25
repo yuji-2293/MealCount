@@ -12,6 +12,7 @@ export const purchases = sqliteTable(
     purchased_meal_count: integer('purchased_meal_count').notNull(),
     created_at: text('created_at').notNull(),
     updated_at: text('updated_at').notNull(),
+    user_id: integer('user_id').references(() => users.id),
   },
   (table) => [
     check(
@@ -29,10 +30,20 @@ export const mealStock = sqliteTable(
     daily_meal_count: integer('daily_meal_count').notNull().default(3),
     current_meal_stock: integer('current_meal_stock').notNull().default(0),
     last_calculated_date: text('last_calculated_date').notNull(),
+    version: integer('version').notNull().default(0),
     updated_at: text('updated_at').notNull(),
+    user_id: integer('user_id')
+      .unique()
+      .references(() => users.id),
   },
   (table) => [
     check('current_meal_stock_nonnegative', sql`${table.current_meal_stock} >= 0`),
     check('daily_meal_count_nonnegative', sql`${table.daily_meal_count} >= 0`),
   ]
 );
+
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+});

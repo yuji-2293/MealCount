@@ -6,6 +6,7 @@ export const purchaseSchema = z.object({
   plannedAmount: z.number().nonnegative().int(),
   monthlyAmount: z.number().nonnegative().int(),
   purchaseDate: z.string(),
+  userId: z.number().int().positive(),
 });
 
 // 部分的に更新可能なスキーマを定義, partialを使用して全てのフィールドをoptionalにする
