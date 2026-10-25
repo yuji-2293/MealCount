@@ -30,21 +30,14 @@ export const mealStockServices = {
       throw new Error(`Meal stock with id ${id} not found`);
     }
     // 既存データから補正前の在庫と経過日数を計算
-    const { calculatedStock, elapsedDays } = calculateEstimatedStock(
+    const { estimatedStock } = calculateEstimatedStock(
       existingData.last_calculated_date,
       existingData.current_meal_stock,
       existingData.daily_meal_count
     );
 
-    // 更新用のdataから補正値を計算する
-    // actualMealCount が指定されていれば,デフォルトの daily_meal_count との差分を補正値とする
-    const adjustment =
-      elapsedDays === 0 || data.actualMealCount === undefined
-        ? 0
-        : existingData.daily_meal_count - data.actualMealCount;
-
-    // 補正値を在庫に反映
-    const confirmedStock = data.currentMealStock ?? Math.max(0, calculatedStock + adjustment);
+    // optionalで指定されてるcurrentMealStockを確定してrepositoryに渡す
+    const confirmedStock = data.currentMealStock ?? estimatedStock;
 
     const result = await mealStockRepository.update(
       id,
