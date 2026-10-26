@@ -7,6 +7,8 @@ import { calculateEstimatedStock } from '../../meal-stock/functions/calculateEst
 import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
 import { getTodayJST } from '../../../utils/date';
 import { drizzle } from 'drizzle-orm/d1';
+
+// 購入金額の合計や1食あたりの金額を計算する関数
 const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
   const totalAmount = data.sameDayAmount + data.plannedAmount + data.monthlyAmount;
   const totalRealAmount = data.sameDayAmount + data.plannedAmount;
@@ -20,6 +22,7 @@ const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
 
 export const purchaseService = {
   createPurchase: async (data: CreatePurchaseData, d1: D1Database) => {
+    // dataを受け取って関数に渡し、購入金額の合計や1食あたりの金額を計算
     const amounts = calculateTotalAmount(data);
 
     // postされたpurchaseMealCountに基づいてmealStockを更新するための処理
@@ -43,19 +46,21 @@ export const purchaseService = {
     const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingData.id, {
       currentMealStock: confirmedStock,
       lastCalculatedDate: getTodayJST(),
-      version: existingData.version,
     });
 
+    // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
     const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
-    const mealStockResult = mealStockRows[0];
-    const purchaseResult = purchaseRows[0];
-
+    // batchの結果を確認し、失敗していればエラーを投げる
     if (mealStockRows.length === 0) {
       throw new Error('Failed to update meal stock');
     }
     if (purchaseRows.length === 0) {
       throw new Error('Failed to create purchase');
     }
+
+    // batchの結果を配列から取り出して、それぞれの結果を返す
+    const mealStockResult = mealStockRows[0];
+    const purchaseResult = purchaseRows[0];
 
     return {
       purchase: {
@@ -68,7 +73,9 @@ export const purchaseService = {
         createdAt: purchaseResult.created_at,
         updatedAt: purchaseResult.updated_at,
       },
+
       amounts,
+
       mealStock: {
         id: mealStockResult.id,
         currentMealStock: mealStockResult.current_meal_stock,

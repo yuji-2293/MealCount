@@ -43,6 +43,13 @@
       "when": 1792911991119,
       "tag": "0005_majestic_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1792916830932,
+      "tag": "0006_nebulous_scourge",
+      "breakpoints": true
     }
   ]
 }
