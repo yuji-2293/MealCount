@@ -142,6 +142,12 @@ export const purchaseService = {
   },
 
   updatePurchase: async (id: number, data: UpdatePurchaseData, d1: D1Database) => {
+    const existingData = await mealStockRepository.findByUserId(d1, data.userId);
+    const beforeUpdateMealStock = existingData.current_meal_stock;
+    if (beforeUpdateMealStock === undefined) {
+      throw new Error('Meal stock not found for the user');
+    }
+
     const result = await purchaseRepository.update(id, data, d1);
     if (!result) {
       return null;
