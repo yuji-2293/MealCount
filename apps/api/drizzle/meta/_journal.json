@@ -50,6 +50,13 @@
       "when": 1792916830932,
       "tag": "0006_nebulous_scourge",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1793249335460,
+      "tag": "0007_mature_guardian",
+      "breakpoints": true
     }
   ]
 }

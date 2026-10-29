@@ -51,11 +51,8 @@ export const purchaseService = {
     // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
     const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
     // batchの結果を確認し、失敗していればエラーを投げる
-    if (mealStockRows.length === 0) {
-      throw new Error('Failed to update meal stock');
-    }
-    if (purchaseRows.length === 0) {
-      throw new Error('Failed to create purchase');
+    if (mealStockRows.length === 0 || purchaseRows.length === 0) {
+      throw new Error('Failed to update meal stock or create purchase');
     }
 
     // batchの結果を配列から取り出して、それぞれの結果を返す
@@ -142,43 +139,123 @@ export const purchaseService = {
   },
 
   updatePurchase: async (id: number, data: UpdatePurchaseData, d1: D1Database) => {
-    const existingData = await mealStockRepository.findByUserId(d1, data.userId);
-    const beforeUpdateMealStock = existingData.current_meal_stock;
-    if (beforeUpdateMealStock === undefined) {
+    // 更新前のpurchaseを取得
+    const existingPurchase = await purchaseRepository.findById(id, d1);
+    if (!existingPurchase) {
+      throw new Error('Purchase not found');
+    }
+    // 更新前のユーザーIDを取得
+    const userId = existingPurchase.user_id;
+    // 更新前のユーザーのmealStockを取得
+    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
+    if (!existingMealStock) {
       throw new Error('Meal stock not found for the user');
     }
 
-    const result = await purchaseRepository.update(id, data, d1);
-    if (!result) {
-      return null;
+    // 更新前の購入食数を取得
+    const beforeCount = existingPurchase.purchased_meal_count;
+
+    // 更新前の推定在庫食数を計算
+    const { estimatedStock } = calculateEstimatedStock(
+      existingMealStock.last_calculated_date,
+      existingMealStock.current_meal_stock,
+      existingMealStock.daily_meal_count
+    );
+
+    // 更新後の購入食数を取得
+    const afterCount = data.purchasedMealCount ?? beforeCount;
+
+    // 更新後の購入食数の差分を計算し、確定在庫食数を計算
+    const estimatedCount = afterCount - beforeCount;
+    const estimatedAfterMealStock = Math.max(0, estimatedStock + estimatedCount);
+
+    // 更新後の在庫食数をbatchで更新
+    const db = drizzle(d1);
+    const purchaseQuery = purchaseRepository.buildUpdateQuery(db, id, data);
+    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingMealStock.id, {
+      currentMealStock: estimatedAfterMealStock,
+      lastCalculatedDate: getTodayJST(),
+    });
+
+    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
+    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
+      throw new Error('Failed to update meal stock or purchase');
     }
+
+    const purchaseResult = purchaseRows[0];
+    const mealStockResult = mealStockRows[0];
+
     const updateCalculated: CalculateAmounts = {
-      sameDayAmount: result.same_day_amount,
-      plannedAmount: result.planned_amount,
-      monthlyAmount: result.monthly_amount,
-      purchasedMealCount: result.purchased_meal_count,
+      sameDayAmount: purchaseResult.same_day_amount,
+      plannedAmount: purchaseResult.planned_amount,
+      monthlyAmount: purchaseResult.monthly_amount,
+      purchasedMealCount: purchaseResult.purchased_meal_count,
     };
     const amounts = calculateTotalAmount(updateCalculated);
     return {
       purchase: {
-        id: result.id,
-        purchaseDate: result.purchase_date,
-        sameDayAmount: result.same_day_amount,
-        plannedAmount: result.planned_amount,
-        monthlyAmount: result.monthly_amount,
-        purchasedMealCount: result.purchased_meal_count,
-        createdAt: result.created_at,
-        updatedAt: result.updated_at,
+        id: purchaseResult.id,
+        purchaseDate: purchaseResult.purchase_date,
+        sameDayAmount: purchaseResult.same_day_amount,
+        plannedAmount: purchaseResult.planned_amount,
+        monthlyAmount: purchaseResult.monthly_amount,
+        purchasedMealCount: purchaseResult.purchased_meal_count,
+        createdAt: purchaseResult.created_at,
+        updatedAt: purchaseResult.updated_at,
       },
       amounts,
+      mealStock: {
+        currentMealStock: mealStockResult.current_meal_stock,
+        lastCalculatedDate: mealStockResult.last_calculated_date,
+        dailyMealCount: mealStockResult.daily_meal_count,
+      },
     };
   },
 
   deletePurchase: async (id: number, d1: D1Database) => {
-    const result = await purchaseRepository.delete(id, d1);
-    if (!result) {
-      return null;
+    // 削除前の購入情報を取得
+    const existingPurchase = await purchaseRepository.findById(id, d1);
+    if (!existingPurchase) {
+      throw new Error('Purchase not found');
     }
-    return result;
+    // 削除前のユーザーIDを取得
+    const userId = existingPurchase.user_id;
+    // 削除前のユーザーの在庫情報を取得
+    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
+    if (!existingMealStock) {
+      throw new Error('Meal stock not found for the user');
+    }
+    // 削除前の購入食数を取得
+    const mealCount = existingPurchase.purchased_meal_count;
+
+    // 削除前の推定在庫食数を計算
+    const { estimatedStock } = calculateEstimatedStock(
+      existingMealStock.last_calculated_date,
+      existingMealStock.current_meal_stock,
+      existingMealStock.daily_meal_count
+    );
+
+    // 削除後の購入食数の差分を計算し、確定在庫食数を計算
+    const estimatedCount = estimatedStock - mealCount;
+    const estimatedAfterMealStock = Math.max(0, estimatedCount);
+
+    // 削除後の在庫食数をbatchで更新
+    const db = drizzle(d1);
+    const purchaseQuery = purchaseRepository.buildDeleteQuery(db, id);
+    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingMealStock.id, {
+      currentMealStock: estimatedAfterMealStock,
+      lastCalculatedDate: getTodayJST(),
+    });
+
+    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
+    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
+      throw new Error('Failed to delete purchase or update meal stock');
+    }
+    const deletedPurchase = purchaseRows[0];
+    const updatedMealStock = mealStockRows[0];
+    return {
+      deletedPurchase,
+      updatedMealStock,
+    };
   },
 };
