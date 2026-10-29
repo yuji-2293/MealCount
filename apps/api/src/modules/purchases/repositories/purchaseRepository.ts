@@ -51,17 +51,34 @@ export const purchaseRepository = {
         planned_amount: data.plannedAmount,
         monthly_amount: data.monthlyAmount,
         purchase_date: data.purchaseDate,
-        user_id: data.userId,
         updated_at: now,
       })
       .where(eq(purchases.id, id))
       .returning();
     return result;
   },
+  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: UpdatePurchaseData) => {
+    const now = new Date().toISOString();
+    return db
+      .update(purchases)
+      .set({
+        purchased_meal_count: data.purchasedMealCount,
+        same_day_amount: data.sameDayAmount,
+        planned_amount: data.plannedAmount,
+        monthly_amount: data.monthlyAmount,
+        purchase_date: data.purchaseDate,
+        updated_at: now,
+      })
+      .where(eq(purchases.id, id))
+      .returning();
+  },
 
   delete: async (id: number, d1: D1Database) => {
     const db = drizzle(d1);
     const [result] = await db.delete(purchases).where(eq(purchases.id, id)).returning();
     return result;
+  },
+  buildDeleteQuery: (db: ReturnType<typeof drizzle>, id: number) => {
+    return db.delete(purchases).where(eq(purchases.id, id)).returning();
   },
 };

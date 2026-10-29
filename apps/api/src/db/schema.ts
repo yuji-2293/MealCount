@@ -12,7 +12,9 @@ export const purchases = sqliteTable(
     purchased_meal_count: integer('purchased_meal_count').notNull(),
     created_at: text('created_at').notNull(),
     updated_at: text('updated_at').notNull(),
-    user_id: integer('user_id').references(() => users.id),
+    user_id: integer('user_id')
+      .notNull()
+      .references(() => users.id),
   },
   (table) => [
     check(
@@ -32,6 +34,7 @@ export const mealStock = sqliteTable(
     last_calculated_date: text('last_calculated_date').notNull(),
     updated_at: text('updated_at').notNull(),
     user_id: integer('user_id')
+      .notNull()
       .unique()
       .references(() => users.id),
   },
