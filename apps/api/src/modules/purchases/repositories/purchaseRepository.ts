@@ -10,7 +10,7 @@ export const purchaseRepository = {
     // 在庫を反映してmealStockを更新
     const db = drizzle(d1);
     const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
-    const mealStockQuery = mealStockRepository.buildUpdateQuery(
+    const mealStockQuery = mealStockRepository.buildAddPurchaseMealCountQuery(
       db,
       mealStockId,
       data.purchasedMealCount
@@ -55,23 +55,28 @@ export const purchaseRepository = {
     return result;
   },
 
-  update: async (id: number, data: UpdatePurchaseData, d1: D1Database) => {
+  updateWithMealStock: async (
+    id: number,
+    data: UpdatePurchaseData,
+    d1: D1Database,
+    mealStockId: number
+  ) => {
+    // 更新後の在庫食数をbatchで更新
     const db = drizzle(d1);
-    const now = new Date().toISOString();
-    const [result] = await db
-      .update(purchases)
-      .set({
-        purchased_meal_count: data.purchasedMealCount,
-        same_day_amount: data.sameDayAmount,
-        planned_amount: data.plannedAmount,
-        monthly_amount: data.monthlyAmount,
-        purchase_date: data.purchaseDate,
-        updated_at: now,
-      })
-      .where(eq(purchases.id, id))
-      .returning();
-    return result;
+    const purchaseQuery = purchaseRepository.buildUpdateQuery(db, id, data);
+    const mealStockQuery = mealStockRepository.buildUpdatePurchaseMealCountQuery(db, mealStockId);
+
+    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
+    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
+      throw new Error('Failed to update meal stock or purchase');
+    }
+
+    return {
+      afterPurchase: purchaseRows[0],
+      afterMealStock: mealStockRows[0],
+    };
   },
+
   buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: UpdatePurchaseData) => {
     const now = new Date().toISOString();
     return db

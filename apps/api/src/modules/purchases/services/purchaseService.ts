@@ -31,16 +31,7 @@ export const purchaseService = {
       throw new Error(`Meal stock for user id ${data.userId} not found`);
     }
 
-    // // 更新前のデータを元に推定在庫を計算する関数からestimatedStockを取得
-    // const { estimatedStock } = calculateEstimatedStock(
-    //   existingData.last_calculated_date,
-    //   existingData.current_meal_stock,
-    //   existingData.daily_meal_count
-    // );
-    // // 推定在庫と購入食数を変数に格納
-    // const estimatedStockValue = estimatedStock;
-    // const purchasedMealCount = data.purchasedMealCount;
-    // 確定在庫を計算
+    // 更新用idを取得
     const mealStockId = existingData.id;
     const { mealStock, purchase } = await purchaseRepository.createWithMealStock(
       data,
@@ -158,45 +149,37 @@ export const purchaseService = {
     const estimatedCount = afterCount - beforeCount;
     const estimatedAfterMealStock = Math.max(0, estimatedStock + estimatedCount);
 
-    // 更新後の在庫食数をbatchで更新
-    const db = drizzle(d1);
-    const purchaseQuery = purchaseRepository.buildUpdateQuery(db, id, data);
-    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingMealStock.id, {
-      currentMealStock: estimatedAfterMealStock,
-      lastCalculatedDate: getTodayJST(),
-    });
-
-    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
-    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
-      throw new Error('Failed to update meal stock or purchase');
-    }
-
-    const purchaseResult = purchaseRows[0];
-    const mealStockResult = mealStockRows[0];
+    const mealStockId = existingMealStock.id;
+    const { afterMealStock, afterPurchase } = await purchaseRepository.updateWithMealStock(
+      id,
+      data,
+      d1,
+      mealStockId
+    );
 
     const updateCalculated: CalculateAmounts = {
-      sameDayAmount: purchaseResult.same_day_amount,
-      plannedAmount: purchaseResult.planned_amount,
-      monthlyAmount: purchaseResult.monthly_amount,
-      purchasedMealCount: purchaseResult.purchased_meal_count,
+      sameDayAmount: afterPurchase.same_day_amount,
+      plannedAmount: afterPurchase.planned_amount,
+      monthlyAmount: afterPurchase.monthly_amount,
+      purchasedMealCount: afterPurchase.purchased_meal_count,
     };
     const amounts = calculateTotalAmount(updateCalculated);
     return {
       purchase: {
-        id: purchaseResult.id,
-        purchaseDate: purchaseResult.purchase_date,
-        sameDayAmount: purchaseResult.same_day_amount,
-        plannedAmount: purchaseResult.planned_amount,
-        monthlyAmount: purchaseResult.monthly_amount,
-        purchasedMealCount: purchaseResult.purchased_meal_count,
-        createdAt: purchaseResult.created_at,
-        updatedAt: purchaseResult.updated_at,
+        id: afterPurchase.id,
+        purchaseDate: afterPurchase.purchase_date,
+        sameDayAmount: afterPurchase.same_day_amount,
+        plannedAmount: afterPurchase.planned_amount,
+        monthlyAmount: afterPurchase.monthly_amount,
+        purchasedMealCount: afterPurchase.purchased_meal_count,
+        createdAt: afterPurchase.created_at,
+        updatedAt: afterPurchase.updated_at,
       },
       amounts,
       mealStock: {
-        currentMealStock: mealStockResult.current_meal_stock,
-        lastCalculatedDate: mealStockResult.last_calculated_date,
-        dailyMealCount: mealStockResult.daily_meal_count,
+        currentMealStock: afterMealStock.current_meal_stock,
+        lastCalculatedDate: afterMealStock.last_calculated_date,
+        dailyMealCount: afterMealStock.daily_meal_count,
       },
     };
   },
