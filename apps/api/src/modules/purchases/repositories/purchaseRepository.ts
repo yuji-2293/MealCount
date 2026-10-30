@@ -56,12 +56,7 @@ export const purchaseRepository = {
     return result;
   },
 
-  updateWithMealStock: async (
-    id: number,
-    data: UpdatePurchaseData,
-    d1: D1Database,
-    expectedVersion: number
-  ) => {
+  update: async (id: number, data: UpdatePurchaseData, d1: D1Database, expectedVersion: number) => {
     // 更新後の在庫食数をbatchで更新
     const db = drizzle(d1);
     const [purchases] = await purchaseRepository.buildUpdateQuery(db, id, data, expectedVersion);
@@ -85,12 +80,12 @@ export const purchaseRepository = {
     return db
       .update(purchases)
       .set({
+        version: sql`${purchases.version} + 1`,
         purchased_meal_count: data.purchasedMealCount,
         same_day_amount: data.sameDayAmount,
         planned_amount: data.plannedAmount,
         monthly_amount: data.monthlyAmount,
         purchase_date: data.purchaseDate,
-        version: sql`${purchases.version} + 1`,
         updated_at: now,
       })
       .where(and(eq(purchases.id, id), eq(purchases.version, expectedVersion)))

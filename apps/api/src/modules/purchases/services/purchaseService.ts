@@ -133,12 +133,7 @@ export const purchaseService = {
     }
 
     const expectedVersion = data.version;
-    const { afterPurchase } = await purchaseRepository.updateWithMealStock(
-      id,
-      data,
-      d1,
-      expectedVersion
-    );
+    const { afterPurchase } = await purchaseRepository.update(id, data, d1, expectedVersion);
 
     const updateCalculated: CalculateAmounts = {
       sameDayAmount: afterPurchase.same_day_amount,
