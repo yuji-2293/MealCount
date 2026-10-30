@@ -10,6 +10,7 @@ export const purchases = sqliteTable(
     planned_amount: integer('planned_amount').notNull(),
     monthly_amount: integer('monthly_amount').notNull(),
     purchased_meal_count: integer('purchased_meal_count').notNull(),
+    version: integer('version').notNull().default(0),
     created_at: text('created_at').notNull(),
     updated_at: text('updated_at').notNull(),
     user_id: integer('user_id')

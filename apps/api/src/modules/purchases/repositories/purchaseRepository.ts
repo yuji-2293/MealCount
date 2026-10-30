@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import type { D1Database } from '@cloudflare/workers-types';
 import type { CreatePurchaseData } from '../schemas/purchaseSchemas';
 import { purchases } from '../../../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import type { UpdatePurchaseData } from '../schemas/purchaseSchemas';
 import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
 export const purchaseRepository = {
@@ -18,6 +18,7 @@ export const purchaseRepository = {
 
     // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
     const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
+
     if (mealStockRows.length === 0 || purchaseRows.length === 0) {
       throw new Error('Failed to update meal stock or create purchase');
     }
@@ -59,25 +60,27 @@ export const purchaseRepository = {
     id: number,
     data: UpdatePurchaseData,
     d1: D1Database,
-    mealStockId: number
+    expectedVersion: number
   ) => {
     // 更新後の在庫食数をbatchで更新
     const db = drizzle(d1);
-    const purchaseQuery = purchaseRepository.buildUpdateQuery(db, id, data);
-    const mealStockQuery = mealStockRepository.buildUpdatePurchaseMealCountQuery(db, mealStockId);
+    const [purchases] = await purchaseRepository.buildUpdateQuery(db, id, data, expectedVersion);
 
-    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
-    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
-      throw new Error('Failed to update meal stock or purchase');
+    if (!purchases) {
+      throw new Error('Failed to update purchase');
     }
 
     return {
-      afterPurchase: purchaseRows[0],
-      afterMealStock: mealStockRows[0],
+      afterPurchase: purchases,
     };
   },
 
-  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: UpdatePurchaseData) => {
+  buildUpdateQuery: (
+    db: ReturnType<typeof drizzle>,
+    id: number,
+    data: UpdatePurchaseData,
+    expectedVersion: number
+  ) => {
     const now = new Date().toISOString();
     return db
       .update(purchases)
@@ -87,9 +90,10 @@ export const purchaseRepository = {
         planned_amount: data.plannedAmount,
         monthly_amount: data.monthlyAmount,
         purchase_date: data.purchaseDate,
+        version: sql`${purchases.version} + 1`,
         updated_at: now,
       })
-      .where(eq(purchases.id, id))
+      .where(and(eq(purchases.id, id), eq(purchases.version, expectedVersion)))
       .returning();
   },
 

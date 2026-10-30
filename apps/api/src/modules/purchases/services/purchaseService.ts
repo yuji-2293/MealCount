@@ -132,29 +132,12 @@ export const purchaseService = {
       throw new Error('Meal stock not found for the user');
     }
 
-    // 更新前の購入食数を取得
-    const beforeCount = existingPurchase.purchased_meal_count;
-
-    // 更新前の推定在庫食数を計算
-    const { estimatedStock } = calculateEstimatedStock(
-      existingMealStock.last_calculated_date,
-      existingMealStock.current_meal_stock,
-      existingMealStock.daily_meal_count
-    );
-
-    // 更新後の購入食数を取得
-    const afterCount = data.purchasedMealCount ?? beforeCount;
-
-    // 更新後の購入食数の差分を計算し、確定在庫食数を計算
-    const estimatedCount = afterCount - beforeCount;
-    const estimatedAfterMealStock = Math.max(0, estimatedStock + estimatedCount);
-
-    const mealStockId = existingMealStock.id;
-    const { afterMealStock, afterPurchase } = await purchaseRepository.updateWithMealStock(
+    const expectedVersion = data.version;
+    const { afterPurchase } = await purchaseRepository.updateWithMealStock(
       id,
       data,
       d1,
-      mealStockId
+      expectedVersion
     );
 
     const updateCalculated: CalculateAmounts = {
@@ -172,15 +155,11 @@ export const purchaseService = {
         plannedAmount: afterPurchase.planned_amount,
         monthlyAmount: afterPurchase.monthly_amount,
         purchasedMealCount: afterPurchase.purchased_meal_count,
+        version: afterPurchase.version,
         createdAt: afterPurchase.created_at,
         updatedAt: afterPurchase.updated_at,
       },
       amounts,
-      mealStock: {
-        currentMealStock: afterMealStock.current_meal_stock,
-        lastCalculatedDate: afterMealStock.last_calculated_date,
-        dailyMealCount: afterMealStock.daily_meal_count,
-      },
     };
   },
 

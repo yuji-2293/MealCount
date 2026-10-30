@@ -35,6 +35,7 @@ export const mealStockRepository = {
       .returning();
     return result;
   },
+
   buildAddPurchaseMealCountQuery: (
     db: ReturnType<typeof drizzle>,
     id: number,
@@ -42,35 +43,18 @@ export const mealStockRepository = {
   ) => {
     const today = getTodayJST();
     const elapsedDays = sql`MAX(0, CAST(julianday(${today}) - julianday(${mealStock.last_calculated_date}) AS INTEGER))`;
-    const estimatedStock = sql`
+    const differenceStock = sql`
       MAX(0, ${mealStock.current_meal_stock} - ${mealStock.daily_meal_count} * ${elapsedDays}) + ${purchasedMealCount}
     `;
 
     return db
       .update(mealStock)
       .set({
-        current_meal_stock: sql<number>`${estimatedStock}`,
+        current_meal_stock: sql<number>`${differenceStock}`,
         last_calculated_date: today,
         updated_at: new Date().toISOString(),
       })
       .where(eq(mealStock.id, id))
-      .returning();
-  },
-  buildUpdatePurchaseMealCountQuery: (db: ReturnType<typeof drizzle>, mealStockId: number) => {
-    const today = getTodayJST();
-    const elapsedDays = sql`MAX(0, CAST(julianday(${today}) - julianday(${mealStock.last_calculated_date}) AS INTEGER))`;
-    const estimatedStock = sql`
-      MAX(0, ${mealStock.current_meal_stock} - ${mealStock.daily_meal_count} * ${elapsedDays})
-    `;
-
-    return db
-      .update(mealStock)
-      .set({
-        current_meal_stock: sql<number>`${estimatedStock}`,
-        last_calculated_date: today,
-        updated_at: new Date().toISOString(),
-      })
-      .where(eq(mealStock.id, mealStockId))
       .returning();
   },
 };
