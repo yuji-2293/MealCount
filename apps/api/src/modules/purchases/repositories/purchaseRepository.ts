@@ -4,12 +4,29 @@ import type { CreatePurchaseData } from '../schemas/purchaseSchemas';
 import { purchases } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 import type { UpdatePurchaseData } from '../schemas/purchaseSchemas';
+import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
+import { getTodayJST } from '../../../utils/date';
 export const purchaseRepository = {
-  create: async (data: CreatePurchaseData, d1: D1Database) => {
-    const db = drizzle(d1); // Local D1へのアクセス用
-    const query = purchaseRepository.buildCreateQuery(db, data);
-    const [result] = await query;
-    return result;
+  createWithMealStock: async (
+    data: CreatePurchaseData,
+    d1: D1Database,
+    existingDataId: number,
+    confirmedStock: number
+  ) => {
+    // 在庫を反映してmealStockを更新
+    const db = drizzle(d1);
+    const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
+    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingDataId, {
+      currentMealStock: confirmedStock,
+      lastCalculatedDate: getTodayJST(),
+    });
+
+    // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
+    const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
+    return {
+      mealStock: mealStockRows[0],
+      purchase: purchaseRows[0],
+    };
   },
   buildCreateQuery: (db: ReturnType<typeof drizzle>, data: CreatePurchaseData) => {
     const now = new Date().toISOString();

@@ -39,46 +39,54 @@ export const purchaseService = {
     );
     // 確定在庫を計算
     const confirmedStock = estimatedStock + data.purchasedMealCount;
+    const { mealStock, purchase } = await purchaseRepository.createWithMealStock(
+      data,
+      d1,
+      existingData.id,
+      confirmedStock
+    );
 
-    // 在庫を反映してmealStockを更新
-    const db = drizzle(d1);
-    const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
-    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingData.id, {
-      currentMealStock: confirmedStock,
-      lastCalculatedDate: getTodayJST(),
-    });
+    // -------ここからrepositoryに切り出す--------------
 
-    // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
-    const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
-    // batchの結果を確認し、失敗していればエラーを投げる
-    if (mealStockRows.length === 0 || purchaseRows.length === 0) {
-      throw new Error('Failed to update meal stock or create purchase');
-    }
+    // // 在庫を反映してmealStockを更新
+    // const db = drizzle(d1);
+    // const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
+    // const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingData.id, {
+    //   currentMealStock: confirmedStock,
+    //   lastCalculatedDate: getTodayJST(),
+    // });
 
-    // batchの結果を配列から取り出して、それぞれの結果を返す
-    const mealStockResult = mealStockRows[0];
-    const purchaseResult = purchaseRows[0];
+    // // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
+    // const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
+    // // batchの結果を確認し、失敗していればエラーを投げる
+    // if (mealStockRows.length === 0 || purchaseRows.length === 0) {
+    //   throw new Error('Failed to update meal stock or create purchase');
+    // }
+
+    // // batchの結果を配列から取り出して、それぞれの結果を返す
+    // const mealStockResult = mealStockRows[0];
+    // const purchaseResult = purchaseRows[0];
 
     return {
       purchase: {
-        id: purchaseResult.id,
-        purchaseDate: purchaseResult.purchase_date,
-        sameDayAmount: purchaseResult.same_day_amount,
-        plannedAmount: purchaseResult.planned_amount,
-        monthlyAmount: purchaseResult.monthly_amount,
-        purchasedMealCount: purchaseResult.purchased_meal_count,
-        createdAt: purchaseResult.created_at,
-        updatedAt: purchaseResult.updated_at,
+        id: purchase.id,
+        purchaseDate: purchase.purchase_date,
+        sameDayAmount: purchase.same_day_amount,
+        plannedAmount: purchase.planned_amount,
+        monthlyAmount: purchase.monthly_amount,
+        purchasedMealCount: purchase.purchased_meal_count,
+        createdAt: purchase.created_at,
+        updatedAt: purchase.updated_at,
       },
 
       amounts,
 
       mealStock: {
-        id: mealStockResult.id,
-        currentMealStock: mealStockResult.current_meal_stock,
-        lastCalculatedDate: mealStockResult.last_calculated_date,
-        dailyMealCount: mealStockResult.daily_meal_count,
-        updatedAt: mealStockResult.updated_at,
+        id: mealStock.id,
+        currentMealStock: mealStock.current_meal_stock,
+        lastCalculatedDate: mealStock.last_calculated_date,
+        dailyMealCount: mealStock.daily_meal_count,
+        updatedAt: mealStock.updated_at,
       },
     };
   },
