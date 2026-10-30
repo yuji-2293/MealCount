@@ -92,12 +92,15 @@ export const purchaseRepository = {
       .returning();
   },
 
-  delete: async (id: number, d1: D1Database) => {
+  delete: async (id: number, d1: D1Database, expectedVersion: number) => {
     const db = drizzle(d1);
-    const [result] = await db.delete(purchases).where(eq(purchases.id, id)).returning();
+    const [result] = await purchaseRepository.buildDeleteQuery(db, id, expectedVersion);
     return result;
   },
-  buildDeleteQuery: (db: ReturnType<typeof drizzle>, id: number) => {
-    return db.delete(purchases).where(eq(purchases.id, id)).returning();
+  buildDeleteQuery: (db: ReturnType<typeof drizzle>, id: number, expectedVersion: number) => {
+    return db
+      .delete(purchases)
+      .where(and(eq(purchases.id, id), eq(purchases.version, expectedVersion)))
+      .returning();
   },
 };

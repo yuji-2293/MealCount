@@ -2,7 +2,11 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import type { Bindings } from '../../../types/bindings';
 import { purchaseService } from '../services/purchaseService';
-import { purchaseSchema, updatePurchaseSchema } from '../schemas/purchaseSchemas';
+import {
+  purchaseSchema,
+  updatePurchaseSchema,
+  deletePurchaseSchema,
+} from '../schemas/purchaseSchemas';
 
 const purchases = new Hono<{ Bindings: Bindings }>()
   .get('/', async (c) => {
@@ -39,12 +43,16 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     return c.json(result, 200);
   })
 
-  .delete('/:id', async (c) => {
+  .delete('/:id', zValidator('query', deletePurchaseSchema), async (c) => {
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
-    const result = await purchaseService.deletePurchase(Number(id), d1);
+    const { version } = c.req.valid('query');
+    if (!version) {
+      return c.json({ error: 'Version is required' }, 400);
+    }
+    const result = await purchaseService.deletePurchase(Number(id), Number(version), d1);
     if (!result) {
-      return c.json({ error: 'Purchase not found' }, 404);
+      return c.json({ error: 'Purchase version conflict' }, 409);
     }
     return c.body(null, 204);
   });

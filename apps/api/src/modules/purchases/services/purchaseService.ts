@@ -3,10 +3,7 @@ import type { CreatePurchaseData, UpdatePurchaseData } from '../schemas/purchase
 import type { D1Database } from '@cloudflare/workers-types';
 import { purchaseRepository } from '../repositories/purchaseRepository';
 import type { PurchaseAmounts, CalculateAmounts } from '../types/purchaseTypes';
-import { calculateEstimatedStock } from '../../meal-stock/functions/calculateEstimatedStock';
 import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
-import { getTodayJST } from '../../../utils/date';
-import { drizzle } from 'drizzle-orm/d1';
 
 // 購入金額の合計や1食あたりの金額を計算する関数
 const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
@@ -47,6 +44,7 @@ export const purchaseService = {
         plannedAmount: purchase.planned_amount,
         monthlyAmount: purchase.monthly_amount,
         purchasedMealCount: purchase.purchased_meal_count,
+        version: purchase.version,
         createdAt: purchase.created_at,
         updatedAt: purchase.updated_at,
       },
@@ -82,6 +80,7 @@ export const purchaseService = {
           plannedAmount: data.planned_amount,
           monthlyAmount: data.monthly_amount,
           purchasedMealCount: data.purchased_meal_count,
+          version: data.version,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
         },
@@ -111,6 +110,7 @@ export const purchaseService = {
         plannedAmount: data.planned_amount,
         monthlyAmount: data.monthly_amount,
         purchasedMealCount: data.purchased_meal_count,
+        version: data.version,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       },
@@ -158,50 +158,20 @@ export const purchaseService = {
     };
   },
 
-  deletePurchase: async (id: number, d1: D1Database) => {
+  deletePurchase: async (id: number, version: number, d1: D1Database) => {
     // 削除前の購入情報を取得
     const existingPurchase = await purchaseRepository.findById(id, d1);
     if (!existingPurchase) {
       throw new Error('Purchase not found');
     }
-    // 削除前のユーザーIDを取得
-    const userId = existingPurchase.user_id;
-    // 削除前のユーザーの在庫情報を取得
-    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
-    if (!existingMealStock) {
-      throw new Error('Meal stock not found for the user');
+
+    const expectedVersion = version;
+    const deletedPurchase = await purchaseRepository.delete(id, d1, expectedVersion);
+    if (!deletedPurchase) {
+      return null;
     }
-    // 削除前の購入食数を取得
-    const mealCount = existingPurchase.purchased_meal_count;
-
-    // 削除前の推定在庫食数を計算
-    const { estimatedStock } = calculateEstimatedStock(
-      existingMealStock.last_calculated_date,
-      existingMealStock.current_meal_stock,
-      existingMealStock.daily_meal_count
-    );
-
-    // 削除後の購入食数の差分を計算し、確定在庫食数を計算
-    const estimatedCount = estimatedStock - mealCount;
-    const estimatedAfterMealStock = Math.max(0, estimatedCount);
-
-    // 削除後の在庫食数をbatchで更新
-    const db = drizzle(d1);
-    const purchaseQuery = purchaseRepository.buildDeleteQuery(db, id);
-    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingMealStock.id, {
-      currentMealStock: estimatedAfterMealStock,
-      lastCalculatedDate: getTodayJST(),
-    });
-
-    const [purchaseRows, mealStockRows] = await db.batch([purchaseQuery, mealStockQuery]);
-    if (purchaseRows.length === 0 || mealStockRows.length === 0) {
-      throw new Error('Failed to delete purchase or update meal stock');
-    }
-    const deletedPurchase = purchaseRows[0];
-    const updatedMealStock = mealStockRows[0];
     return {
       deletedPurchase,
-      updatedMealStock,
     };
   },
 };

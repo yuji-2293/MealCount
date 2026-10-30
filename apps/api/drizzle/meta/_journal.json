@@ -78,6 +78,13 @@
       "when": 1793349438072,
       "tag": "0010_UpdateTrriger_Re",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1793361395222,
+      "tag": "0011_DeleteTrriger",
+      "breakpoints": true
     }
   ]
 }
