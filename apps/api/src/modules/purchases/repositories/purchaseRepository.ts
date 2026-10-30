@@ -5,24 +5,22 @@ import { purchases } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 import type { UpdatePurchaseData } from '../schemas/purchaseSchemas';
 import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
-import { getTodayJST } from '../../../utils/date';
 export const purchaseRepository = {
-  createWithMealStock: async (
-    data: CreatePurchaseData,
-    d1: D1Database,
-    existingDataId: number,
-    confirmedStock: number
-  ) => {
+  createWithMealStock: async (data: CreatePurchaseData, d1: D1Database, mealStockId: number) => {
     // 在庫を反映してmealStockを更新
     const db = drizzle(d1);
     const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
-    const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingDataId, {
-      currentMealStock: confirmedStock,
-      lastCalculatedDate: getTodayJST(),
-    });
+    const mealStockQuery = mealStockRepository.buildUpdateQuery(
+      db,
+      mealStockId,
+      data.purchasedMealCount
+    );
 
     // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
     const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
+    if (mealStockRows.length === 0 || purchaseRows.length === 0) {
+      throw new Error('Failed to update meal stock or create purchase');
+    }
     return {
       mealStock: mealStockRows[0],
       purchase: purchaseRows[0],

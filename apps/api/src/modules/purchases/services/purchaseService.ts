@@ -31,41 +31,22 @@ export const purchaseService = {
       throw new Error(`Meal stock for user id ${data.userId} not found`);
     }
 
-    // 推定在庫を計算
-    const { estimatedStock } = calculateEstimatedStock(
-      existingData.last_calculated_date,
-      existingData.current_meal_stock,
-      existingData.daily_meal_count
-    );
+    // // 更新前のデータを元に推定在庫を計算する関数からestimatedStockを取得
+    // const { estimatedStock } = calculateEstimatedStock(
+    //   existingData.last_calculated_date,
+    //   existingData.current_meal_stock,
+    //   existingData.daily_meal_count
+    // );
+    // // 推定在庫と購入食数を変数に格納
+    // const estimatedStockValue = estimatedStock;
+    // const purchasedMealCount = data.purchasedMealCount;
     // 確定在庫を計算
-    const confirmedStock = estimatedStock + data.purchasedMealCount;
+    const mealStockId = existingData.id;
     const { mealStock, purchase } = await purchaseRepository.createWithMealStock(
       data,
       d1,
-      existingData.id,
-      confirmedStock
+      mealStockId
     );
-
-    // -------ここからrepositoryに切り出す--------------
-
-    // // 在庫を反映してmealStockを更新
-    // const db = drizzle(d1);
-    // const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
-    // const mealStockQuery = mealStockRepository.buildUpdateQuery(db, existingData.id, {
-    //   currentMealStock: confirmedStock,
-    //   lastCalculatedDate: getTodayJST(),
-    // });
-
-    // // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
-    // const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
-    // // batchの結果を確認し、失敗していればエラーを投げる
-    // if (mealStockRows.length === 0 || purchaseRows.length === 0) {
-    //   throw new Error('Failed to update meal stock or create purchase');
-    // }
-
-    // // batchの結果を配列から取り出して、それぞれの結果を返す
-    // const mealStockResult = mealStockRows[0];
-    // const purchaseResult = purchaseRows[0];
 
     return {
       purchase: {

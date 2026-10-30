@@ -1,7 +1,8 @@
 import { drizzle } from 'drizzle-orm/d1';
 import type { D1Database } from '@cloudflare/workers-types';
 import { mealStock } from '../../../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
+import { getTodayJST } from '../../../utils/date';
 
 // mealStockを更新する際に使用する型
 type MealStockUpdateValues = {
@@ -34,12 +35,18 @@ export const mealStockRepository = {
       .returning();
     return result;
   },
-  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: MealStockUpdateValues) => {
+  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, purchasedMealCount: number) => {
+    const today = getTodayJST();
+    const elapsedDays = sql`MAX(0, CAST(julianday(${today}) - julianday(${mealStock.last_calculated_date}) AS INTEGER))`;
+    const estimatedStock = sql`
+      MAX(0, ${mealStock.current_meal_stock} - ${mealStock.daily_meal_count} * ${elapsedDays}) + ${purchasedMealCount}
+    `;
+
     return db
       .update(mealStock)
       .set({
-        current_meal_stock: data.currentMealStock,
-        last_calculated_date: data.lastCalculatedDate,
+        current_meal_stock: sql<number>`${estimatedStock} + ${purchasedMealCount}`,
+        last_calculated_date: today,
         updated_at: new Date().toISOString(),
       })
       .where(eq(mealStock.id, id))
