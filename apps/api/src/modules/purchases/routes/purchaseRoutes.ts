@@ -47,7 +47,7 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
     const { version } = c.req.valid('query');
-    if (!version) {
+    if (!version && version !== 0) {
       return c.json({ error: 'Version is required' }, 400);
     }
     const result = await purchaseService.deletePurchase(Number(id), Number(version), d1);
