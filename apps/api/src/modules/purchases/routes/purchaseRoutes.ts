@@ -36,6 +36,9 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
     const data = c.req.valid('json');
+    if (!data.version && data.version !== 0) {
+      return c.json({ error: 'Purchase version conflict' }, 409);
+    }
     const result = await purchaseService.updatePurchase(Number(id), data, d1);
     if (!result) {
       return c.json({ error: 'Purchase not found' }, 404);
