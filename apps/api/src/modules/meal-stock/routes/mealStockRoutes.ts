@@ -16,7 +16,11 @@ const mealStock = new Hono<{ Bindings: Bindings }>()
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
     const data = c.req.valid('json');
-    const result = await mealStockServices.updateMealStock(d1, Number(id), data);
+    if (!data.version && data.version !== 0) {
+      return c.json({ error: 'Meal stock version conflict' }, 409);
+    }
+    const version = data.version;
+    const result = await mealStockServices.updateMealStock(d1, Number(id), data, version);
     if (!result) {
       return c.json({ error: 'Meal stock not found' }, 404);
     }

@@ -23,7 +23,12 @@ export const mealStockServices = {
       estimatedStock,
     };
   },
-  updateMealStock: async (d1: D1Database, id: number, data: UpdateMealStockData) => {
+  updateMealStock: async (
+    d1: D1Database,
+    id: number,
+    data: UpdateMealStockData,
+    version: number
+  ) => {
     // idに紐づく既存のデータを取得
     const existingData = await mealStockRepository.findById(d1, id);
     if (!existingData) {
@@ -45,6 +50,7 @@ export const mealStockServices = {
       {
         currentMealStock: confirmedStock,
         lastCalculatedDate: getTodayJST(),
+        version,
       },
 
       d1

@@ -8,6 +8,7 @@ import { getTodayJST } from '../../../utils/date';
 type MealStockUpdateValues = {
   currentMealStock: number;
   lastCalculatedDate: string;
+  version: number;
 };
 
 export const mealStockRepository = {
