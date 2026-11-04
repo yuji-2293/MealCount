@@ -29,7 +29,7 @@ export const mealStockRepository = {
     if (!result) {
       return { afterMealStock: null };
     }
-    return { afterMealStock: result };
+    return { status: 'ok' as const, afterMealStock: result };
   },
   buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: MealStockUpdateValues) => {
     return db

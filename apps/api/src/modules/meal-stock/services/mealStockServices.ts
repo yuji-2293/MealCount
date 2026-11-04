@@ -27,7 +27,7 @@ export const mealStockServices = {
     // idに紐づく既存のデータを取得
     const existingData = await mealStockRepository.findById(d1, id);
     if (!existingData) {
-      return { afterMealStock: null };
+      return { status: 'not_found' as const };
     }
 
     const expectedVersion = data.version;
@@ -43,7 +43,7 @@ export const mealStockServices = {
       d1
     );
     if (!result.afterMealStock) {
-      return { afterMealStock: null };
+      return { status: 'conflict' as const, afterMealStock: null };
     }
     return result;
   },
