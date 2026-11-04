@@ -23,34 +23,21 @@ export const mealStockServices = {
       estimatedStock,
     };
   },
-  updateMealStock: async (
-    d1: D1Database,
-    id: number,
-    data: UpdateMealStockData,
-    version: number
-  ) => {
+  updateMealStock: async (d1: D1Database, id: number, data: UpdateMealStockData) => {
     // idに紐づく既存のデータを取得
     const existingData = await mealStockRepository.findById(d1, id);
     if (!existingData) {
       throw new Error(`Meal stock with id ${id} not found`);
     }
-    // 既存データから補正前の在庫と経過日数を計算
-    const { estimatedStock } = calculateEstimatedStock(
-      existingData.last_calculated_date,
-      existingData.current_meal_stock,
-      existingData.daily_meal_count
-    );
 
-    // optionalで指定されてるcurrentMealStockを確定してrepositoryに渡す
-    const confirmedStock = data.currentMealStock ?? estimatedStock;
-
+    const expectedVersion = data.version;
     const result = await mealStockRepository.update(
       id,
 
       {
-        currentMealStock: confirmedStock,
+        currentMealStock: data.currentMealStock,
         lastCalculatedDate: getTodayJST(),
-        version,
+        version: expectedVersion,
       },
 
       d1

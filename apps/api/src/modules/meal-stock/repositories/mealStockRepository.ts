@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/d1';
 import type { D1Database } from '@cloudflare/workers-types';
 import { mealStock } from '../../../db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and } from 'drizzle-orm';
 import { getTodayJST } from '../../../utils/date';
 
 // mealStockを更新する際に使用する型
@@ -25,18 +25,24 @@ export const mealStockRepository = {
   },
   update: async (id: number, data: MealStockUpdateValues, d1: D1Database) => {
     const db = drizzle(d1);
-    const [result] = await db
+    const [result] = await mealStockRepository.buildUpdateQuery(db, id, data);
+    if (!result) {
+      return { afterMealStock: null };
+    }
+    return { afterMealStock: result };
+  },
+  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: MealStockUpdateValues) => {
+    return db
       .update(mealStock)
       .set({
+        version: sql<number>`${mealStock.version} + 1`,
         current_meal_stock: data.currentMealStock,
         last_calculated_date: data.lastCalculatedDate,
         updated_at: new Date().toISOString(),
       })
-      .where(eq(mealStock.id, id))
+      .where(and(eq(mealStock.id, id), eq(mealStock.version, data.version)))
       .returning();
-    return result;
   },
-
   buildAddPurchaseMealCountQuery: (
     db: ReturnType<typeof drizzle>,
     id: number,
@@ -53,9 +59,11 @@ export const mealStockRepository = {
       .set({
         current_meal_stock: sql<number>`${differenceStock}`,
         last_calculated_date: today,
+        version: sql<number>`${mealStock.version} + 1`,
         updated_at: new Date().toISOString(),
       })
       .where(eq(mealStock.id, id))
+
       .returning();
   },
 };
