@@ -62,10 +62,11 @@ export const purchaseRepository = {
     const [purchases] = await purchaseRepository.buildUpdateQuery(db, id, data, expectedVersion);
 
     if (!purchases) {
-      throw new Error('Failed to update purchase');
+      return { afterPurchase: null };
     }
 
     return {
+      status: 'ok',
       afterPurchase: purchases,
     };
   },

@@ -36,14 +36,18 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
     const data = c.req.valid('json');
-    if (!data.version && data.version !== 0) {
-      return c.json({ error: 'Purchase version conflict' }, 409);
-    }
+
     const result = await purchaseService.updatePurchase(Number(id), data, d1);
-    if (!result) {
+    if (result.status === 'not_found') {
       return c.json({ error: 'Purchase not found' }, 404);
     }
-    return c.json(result, 200);
+    if (result.status === 'meal_stock_not_found') {
+      return c.json({ error: 'Meal stock not found' }, 404);
+    }
+    if (result.status === 'version_conflict') {
+      return c.json({ error: 'Purchase version conflict' }, 409);
+    }
+    return c.json({ status: 'ok', afterPurchase: result });
   })
 
   .delete('/:id', zValidator('query', deletePurchaseSchema), async (c) => {

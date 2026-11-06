@@ -122,19 +122,21 @@ export const purchaseService = {
     // 更新前のpurchaseを取得
     const existingPurchase = await purchaseRepository.findById(id, d1);
     if (!existingPurchase) {
-      throw new Error('Purchase not found');
+      return { status: 'not_found' as const, afterPurchase: null };
     }
     // 更新前のユーザーIDを取得
     const userId = existingPurchase.user_id;
     // 更新前のユーザーのmealStockを取得
     const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
     if (!existingMealStock) {
-      throw new Error('Meal stock not found for the user');
+      return { status: 'meal_stock_not_found' as const, afterPurchase: null };
     }
 
     const expectedVersion = data.version;
     const { afterPurchase } = await purchaseRepository.update(id, data, d1, expectedVersion);
-
+    if (!afterPurchase) {
+      return { status: 'version_conflict' as const, afterPurchase: null };
+    }
     const updateCalculated: CalculateAmounts = {
       sameDayAmount: afterPurchase.same_day_amount,
       plannedAmount: afterPurchase.planned_amount,
@@ -168,7 +170,7 @@ export const purchaseService = {
     const expectedVersion = version;
     const deletedPurchase = await purchaseRepository.delete(id, d1, expectedVersion);
     if (!deletedPurchase) {
-      return null;
+      return { status: 'version_conflict' };
     }
     return {
       deletedPurchase,
