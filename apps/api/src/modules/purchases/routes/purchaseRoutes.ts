@@ -54,11 +54,8 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     const d1 = c.env.meal_count_db;
     const { id } = c.req.param();
     const { version } = c.req.valid('query');
-    if (!version && version !== 0) {
-      return c.json({ error: 'Version is required' }, 400);
-    }
     const result = await purchaseService.deletePurchase(Number(id), Number(version), d1);
-    if (!result) {
+    if (result.status === 'version_conflict') {
       return c.json({ error: 'Purchase version conflict' }, 409);
     }
     return c.body(null, 204);
