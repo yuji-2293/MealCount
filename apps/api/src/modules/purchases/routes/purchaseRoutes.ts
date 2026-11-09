@@ -15,10 +15,10 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     return c.json(allPurchases, 200);
   })
 
-  .get('/:id', async (c) => {
+  .get('/:id', zValidator('param', purchaseSchema), async (c) => {
     const d1 = c.env.meal_count_db;
-    const { id } = c.req.param();
-    const purchase = await purchaseService.findPurchaseById(Number(id), d1);
+    const { id } = c.req.valid('param');
+    const purchase = await purchaseService.findPurchaseById(id, d1);
     if (!purchase) {
       return c.json({ error: 'Purchase not found' }, 404);
     }
@@ -32,29 +32,36 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     return c.json(result, 201);
   })
 
-  .patch('/:id', zValidator('json', updatePurchaseSchema), async (c) => {
-    const d1 = c.env.meal_count_db;
-    const { id } = c.req.param();
-    const data = c.req.valid('json');
+  .patch(
+    '/:id',
+    zValidator('json', updatePurchaseSchema),
+    zValidator('param', purchaseSchema),
+    async (c) => {
+      const d1 = c.env.meal_count_db;
+      const { id } = c.req.valid('param');
+      const data = c.req.valid('json');
 
-    const result = await purchaseService.updatePurchase(Number(id), data, d1);
-    if (result.status === 'not_found') {
-      return c.json({ error: 'Purchase not found' }, 404);
+      const result = await purchaseService.updatePurchase(id, data, d1);
+      if (result.status === 'not_found') {
+        return c.json({ error: 'Purchase not found' }, 404);
+      }
+      if (result.status === 'meal_stock_not_found') {
+        return c.json({ error: 'Meal stock not found' }, 404);
+      }
+      if (result.status === 'version_conflict') {
+        return c.json({ error: 'Purchase version conflict' }, 409);
+      }
+      return c.json({ status: 'ok', afterPurchase: result });
     }
-    if (result.status === 'meal_stock_not_found') {
-      return c.json({ error: 'Meal stock not found' }, 404);
-    }
-    if (result.status === 'version_conflict') {
-      return c.json({ error: 'Purchase version conflict' }, 409);
-    }
-    return c.json({ status: 'ok', afterPurchase: result });
-  })
+  )
 
   .delete('/:id', zValidator('query', deletePurchaseSchema), async (c) => {
     const d1 = c.env.meal_count_db;
-    const { id } = c.req.param();
-    const { version } = c.req.valid('query');
-    const result = await purchaseService.deletePurchase(Number(id), Number(version), d1);
+    const { id, version } = c.req.valid('query');
+    const result = await purchaseService.deletePurchase(id, version, d1);
+    if (result.status === 'not_found') {
+      return c.json({ error: 'Purchase not found' }, 404);
+    }
     if (result.status === 'version_conflict') {
       return c.json({ error: 'Purchase version conflict' }, 409);
     }

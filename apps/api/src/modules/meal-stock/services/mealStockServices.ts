@@ -9,7 +9,7 @@ export const mealStockServices = {
     // elapsedDays 取得処理
     const data = await mealStockRepository.findById(d1, id);
     if (!data) {
-      throw new Error(`Meal stock with id ${id} not found`);
+      return { status: 'not_found' as const };
     }
     // 共通関数にdataを渡して推定在庫を計算
     const { elapsedDays, estimatedStock } = calculateEstimatedStock(

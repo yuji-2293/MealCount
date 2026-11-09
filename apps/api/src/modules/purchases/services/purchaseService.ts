@@ -164,13 +164,12 @@ export const purchaseService = {
     // 削除前の購入情報を取得
     const existingPurchase = await purchaseRepository.findById(id, d1);
     if (!existingPurchase) {
-      throw new Error('Purchase not found');
+      return { status: 'not_found' as const };
     }
-
     const expectedVersion = version;
     const deletedPurchase = await purchaseRepository.delete(id, d1, expectedVersion);
     if (!deletedPurchase) {
-      return { status: 'version_conflict' };
+      return { status: 'version_conflict' as const };
     }
     return {
       deletedPurchase,

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const purchaseSchema = z.object({
+  id: z.coerce.number().int().positive(),
   purchasedMealCount: z.number().positive().int(),
   sameDayAmount: z.number().nonnegative().int(),
   plannedAmount: z.number().nonnegative().int(),
@@ -18,6 +19,7 @@ export const updatePurchaseSchema = purchaseSchema
   .strict();
 
 export const deletePurchaseSchema = z.object({
+  id: z.coerce.number().int().positive(),
   version: z.coerce.number().nonnegative().int(),
 });
 // purchaseSchema から型を自動的に推論して CreatePurchaseData 型を作成
