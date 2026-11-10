@@ -8,6 +8,8 @@ export const PurchaseCreateForm = () => {
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0);
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
+  const [userId, setUserId] = useState<number>(0);
+  const [version, setVersion] = useState<number>(0);
 
   const { mutate, isPending } = useCreatePurchase();
   const handleCreatePurchase = () => {
@@ -18,6 +20,8 @@ export const PurchaseCreateForm = () => {
         monthlyAmount,
         purchasedMealCount,
         purchaseDate,
+        userId,
+        version,
       },
       {
         onSuccess: () => {
@@ -62,6 +66,19 @@ export const PurchaseCreateForm = () => {
         onChange={(e) => setPurchaseDate(e.target.value)}
         placeholder="Purchase Date"
       />
+      <input
+        type="number"
+        value={userId}
+        onChange={(e) => setUserId(Number(e.target.value))}
+        placeholder="User ID"
+      />
+      <input
+        type="number"
+        value={version}
+        onChange={(e) => setVersion(Number(e.target.value))}
+        placeholder="Version"
+      />
+
       <button onClick={handleCreatePurchase} disabled={isPending}>
         Create Purchase
       </button>

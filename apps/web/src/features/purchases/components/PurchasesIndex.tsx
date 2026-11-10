@@ -81,6 +81,7 @@ export const PurchasesIndex = () => {
       {purchases?.map((purchase) => (
         <div key={purchase.purchase.id}>
           <p>Purchase ID: {purchase.purchase.id}</p>
+          <p>User ID: {purchase.purchase.userId}</p>
           <div className="plannedAmount CRUD">
             <p>planed Amount: {purchase.purchase.plannedAmount}</p>
             <p>same Day Amount: {purchase.purchase.sameDayAmount}</p>
