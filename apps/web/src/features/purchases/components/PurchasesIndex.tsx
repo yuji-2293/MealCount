@@ -17,6 +17,7 @@ export const PurchasesIndex = () => {
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [editId, setEditId] = useState<number | null>(null);
+  const [version, setVersion] = useState<number>(0);
 
   // /GET api関数のfetchPurchasesの戻り値の型を取得するための型定義
   type PurchaseItem = Awaited<ReturnType<typeof fetchPurchases>>[number];
@@ -28,17 +29,20 @@ export const PurchasesIndex = () => {
     setMonthlyAmount(purchase.purchase.monthlyAmount);
     setPurchasedMealCount(purchase.purchase.purchasedMealCount);
     setPurchaseDate(purchase.purchase.purchaseDate);
+    setVersion(purchase.purchase.version);
   };
 
   const handleUpdate = (id: number) => {
     updateMutate(
       {
         json: {
+          id,
           plannedAmount,
           sameDayAmount,
           monthlyAmount,
           purchasedMealCount,
           purchaseDate,
+          version,
         },
         param: {
           id: String(id),
@@ -56,10 +60,11 @@ export const PurchasesIndex = () => {
     );
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number, version: number) => {
     mutate(
       {
-        id: String(id),
+        id: id,
+        version: version,
       },
       {
         onSuccess: () => {
@@ -82,6 +87,7 @@ export const PurchasesIndex = () => {
         <div key={purchase.purchase.id}>
           <p>Purchase ID: {purchase.purchase.id}</p>
           <p>User ID: {purchase.purchase.userId}</p>
+          <p>Version: {purchase.purchase.version}</p>
           <div className="plannedAmount CRUD">
             <p>planed Amount: {purchase.purchase.plannedAmount}</p>
             <p>same Day Amount: {purchase.purchase.sameDayAmount}</p>
@@ -93,7 +99,10 @@ export const PurchasesIndex = () => {
             <p>purchase Date: {purchase.purchase.purchaseDate}</p>
             <div className="buttons">
               <button onClick={() => handleEdit(purchase)}>edit</button>
-              <button onClick={() => handleDelete(purchase.purchase.id)} disabled={isDeletePending}>
+              <button
+                onClick={() => handleDelete(purchase.purchase.id, purchase.purchase.version)}
+                disabled={isDeletePending}
+              >
                 削除するよ
               </button>
             </div>

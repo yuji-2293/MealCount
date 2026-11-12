@@ -1,12 +1,16 @@
 import client from '../../../lib/rpcClient';
-import type { InferRequestType } from 'hono/client';
 
 const $delete = client.purchases[':id'].$delete;
-type DeletePurchaseParams = InferRequestType<typeof $delete>['param'];
-
+type DeletePurchaseParams = {
+  id: number;
+  version: number;
+};
 export default async function deletePurchase(params: DeletePurchaseParams) {
+  const Id = String(params.id);
+  const Version = String(params.version);
   const result = await $delete({
-    param: params,
+    param: { id: Id },
+    query: { version: Version },
   });
 
   if (!result.ok) {

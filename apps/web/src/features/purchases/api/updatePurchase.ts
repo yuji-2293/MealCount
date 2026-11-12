@@ -1,5 +1,6 @@
 import client from '../../../lib/rpcClient';
 import type { InferRequestType } from 'hono/client';
+
 const $patch = client.purchases[':id'].$patch;
 type UpdatePurchaseParams = InferRequestType<typeof $patch>;
 

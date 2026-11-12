@@ -4,6 +4,7 @@ import type { Bindings } from '../../../types/bindings';
 import { purchaseService } from '../services/purchaseService';
 import {
   purchaseSchema,
+  getPurchaseSchema,
   updatePurchaseSchema,
   deletePurchaseSchema,
 } from '../schemas/purchaseSchemas';
@@ -15,7 +16,7 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     return c.json(allPurchases, 200);
   })
 
-  .get('/:id', zValidator('param', purchaseSchema), async (c) => {
+  .get('/:id', zValidator('param', getPurchaseSchema), async (c) => {
     const d1 = c.env.meal_count_db;
     const { id } = c.req.valid('param');
     const purchase = await purchaseService.findPurchaseById(id, d1);
@@ -35,7 +36,7 @@ const purchases = new Hono<{ Bindings: Bindings }>()
   .patch(
     '/:id',
     zValidator('json', updatePurchaseSchema),
-    zValidator('param', purchaseSchema),
+    zValidator('param', updatePurchaseSchema.pick({ id: true })),
     async (c) => {
       const d1 = c.env.meal_count_db;
       const { id } = c.req.valid('param');
@@ -55,16 +56,22 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     }
   )
 
-  .delete('/:id', zValidator('query', deletePurchaseSchema), async (c) => {
-    const d1 = c.env.meal_count_db;
-    const { id, version } = c.req.valid('query');
-    const result = await purchaseService.deletePurchase(id, version, d1);
-    if (result.status === 'not_found') {
-      return c.json({ error: 'Purchase not found' }, 404);
+  .delete(
+    '/:id',
+    zValidator('query', deletePurchaseSchema.pick({ version: true })),
+    zValidator('param', deletePurchaseSchema.pick({ id: true })),
+    async (c) => {
+      const d1 = c.env.meal_count_db;
+      const { id } = c.req.valid('param');
+      const { version } = c.req.valid('query');
+      const result = await purchaseService.deletePurchase(id, version, d1);
+      if (result.status === 'not_found') {
+        return c.json({ error: 'Purchase not found' }, 404);
+      }
+      if (result.status === 'version_conflict') {
+        return c.json({ error: 'Purchase version conflict' }, 409);
+      }
+      return c.body(null, 204);
     }
-    if (result.status === 'version_conflict') {
-      return c.json({ error: 'Purchase version conflict' }, 409);
-    }
-    return c.body(null, 204);
-  });
+  );
 export default purchases;
