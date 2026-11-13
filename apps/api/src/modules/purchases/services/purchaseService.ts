@@ -128,9 +128,8 @@ export const purchaseService = {
     }
     // 更新前のユーザーIDを取得
     const userId = existingPurchase.userId;
-    const Id = Number(userId);
     // 更新前のユーザーのmealStockを取得
-    const existingMealStock = await mealStockRepository.findByUserId(d1, Id);
+    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
     if (!existingMealStock) {
       return { status: 'meal_stock_not_found' as const, afterPurchase: null };
     }

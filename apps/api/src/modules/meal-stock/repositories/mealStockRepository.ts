@@ -18,7 +18,7 @@ export const mealStockRepository = {
     return result;
   },
   // user_idをもとに紐づいているデータを取得する関数
-  findByUserId: async (d1: D1Database, userId: number) => {
+  findByUserId: async (d1: D1Database, userId: string) => {
     const db = drizzle(d1);
     const Id = String(userId);
     const [result] = await db.select().from(mealStock).where(eq(mealStock.userId, Id));

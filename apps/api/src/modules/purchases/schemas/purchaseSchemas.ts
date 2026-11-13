@@ -6,7 +6,7 @@ export const purchaseSchema = z.object({
   plannedAmount: z.number().nonnegative().int(),
   monthlyAmount: z.number().nonnegative().int(),
   purchaseDate: z.string(),
-  userId: z.number().int().positive(),
+  userId: z.string(),
   version: z.number().nonnegative().int().optional(),
 });
 
