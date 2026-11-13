@@ -8,7 +8,7 @@ export const PurchaseCreateForm = () => {
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0);
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
-  const [userId, setUserId] = useState<number>(0);
+  const [userId, setUserId] = useState<string>('');
   const [version, setVersion] = useState<number>(0);
 
   const { mutate, isPending } = useCreatePurchase();
@@ -67,9 +67,9 @@ export const PurchaseCreateForm = () => {
         placeholder="Purchase Date"
       />
       <input
-        type="number"
+        type="text"
         value={userId}
-        onChange={(e) => setUserId(Number(e.target.value))}
+        onChange={(e) => setUserId(e.target.value)}
         placeholder="User ID"
       />
       <input
