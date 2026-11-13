@@ -80,7 +80,7 @@ export const purchaseService = {
           plannedAmount: data.planned_amount,
           monthlyAmount: data.monthly_amount,
           purchasedMealCount: data.purchased_meal_count,
-          userId: data.user_id,
+          userId: data.userId,
           version: data.version,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
@@ -111,7 +111,7 @@ export const purchaseService = {
         plannedAmount: data.planned_amount,
         monthlyAmount: data.monthly_amount,
         purchasedMealCount: data.purchased_meal_count,
-        userId: data.user_id,
+        userId: data.userId,
         version: data.version,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -127,9 +127,10 @@ export const purchaseService = {
       return { status: 'not_found' as const, afterPurchase: null };
     }
     // 更新前のユーザーIDを取得
-    const userId = existingPurchase.user_id;
+    const userId = existingPurchase.userId;
+    const Id = Number(userId);
     // 更新前のユーザーのmealStockを取得
-    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
+    const existingMealStock = await mealStockRepository.findByUserId(d1, Id);
     if (!existingMealStock) {
       return { status: 'meal_stock_not_found' as const, afterPurchase: null };
     }
@@ -154,7 +155,7 @@ export const purchaseService = {
         plannedAmount: afterPurchase.planned_amount,
         monthlyAmount: afterPurchase.monthly_amount,
         purchasedMealCount: afterPurchase.purchased_meal_count,
-        userId: afterPurchase.user_id,
+        userId: afterPurchase.userId,
         version: afterPurchase.version,
         createdAt: afterPurchase.created_at,
         updatedAt: afterPurchase.updated_at,

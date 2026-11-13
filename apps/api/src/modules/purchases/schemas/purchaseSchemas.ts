@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const purchaseSchema = z.object({
-  id: z.coerce.number().int().positive(),
   purchasedMealCount: z.number().positive().int(),
   sameDayAmount: z.number().nonnegative().int(),
   plannedAmount: z.number().nonnegative().int(),
@@ -18,10 +17,12 @@ export const updatePurchaseSchema = purchaseSchema
   // omitでuserIdを除外
   .omit({ userId: true })
   // id と version を必須にする
-  .required({ id: true, version: true })
+  .required({ version: true })
   // strictモードを有効にして、未知のフィールドを許可しないようにする
   .strict();
-export const getPurchaseSchema = purchaseSchema.pick({ id: true });
+export const getPurchaseSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
 export const deletePurchaseSchema = z.object({
   id: z.coerce.number().int().positive(),
   version: z.coerce.number().nonnegative().int(),

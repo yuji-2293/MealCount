@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
 import purchases from './modules/purchases/routes/purchaseRoutes';
 import mealStock from './modules/meal-stock/routes/mealStockRoutes';
-import type { Bindings } from './types/bindings';
+import auths from './modules/auth/routes/userRoutes';
 import { cors } from 'hono/cors';
+import type { SessionUser } from './lib/auth';
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<{ Bindings: Env; Variables: { user?: SessionUser } }>();
 
 app.use('*', cors());
 
@@ -13,7 +14,8 @@ const routes = app
     return c.json({ message: 'success' });
   })
   .route('/purchases', purchases)
-  .route('/meal-stock', mealStock);
+  .route('/meal-stock', mealStock)
+  .route('/', auths);
 
 export type AppType = typeof routes;
 

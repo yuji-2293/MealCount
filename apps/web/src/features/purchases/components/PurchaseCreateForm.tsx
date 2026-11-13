@@ -8,7 +8,6 @@ export const PurchaseCreateForm = () => {
   const [monthlyAmount, setMonthlyAmount] = useState<number>(0);
   const [purchasedMealCount, setPurchasedMealCount] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
-  const [id, setId] = useState<number>(0);
   const [userId, setUserId] = useState<number>(0);
   const [version, setVersion] = useState<number>(0);
 
@@ -16,7 +15,6 @@ export const PurchaseCreateForm = () => {
   const handleCreatePurchase = () => {
     mutate(
       {
-        id,
         plannedAmount,
         sameDayAmount,
         monthlyAmount,
@@ -38,12 +36,6 @@ export const PurchaseCreateForm = () => {
 
   return (
     <div>
-      <input
-        type="number"
-        value={id}
-        onChange={(e) => setId(Number(e.target.value))}
-        placeholder="ID"
-      />
       <input
         type="number"
         value={plannedAmount}

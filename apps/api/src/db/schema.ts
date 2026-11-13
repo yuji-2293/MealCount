@@ -13,9 +13,9 @@ export const purchases = sqliteTable(
     version: integer('version').notNull().default(0),
     created_at: text('created_at').notNull(),
     updated_at: text('updated_at').notNull(),
-    user_id: integer('user_id')
+    userId: text('userId')
       .notNull()
-      .references(() => users.id),
+      .references(() => user.id),
   },
   (table) => [
     check(
@@ -35,10 +35,10 @@ export const mealStock = sqliteTable(
     last_calculated_date: text('last_calculated_date').notNull(),
     version: integer('version').notNull().default(0),
     updated_at: text('updated_at').notNull(),
-    user_id: integer('user_id')
+    userId: text('userId')
       .notNull()
       .unique()
-      .references(() => users.id),
+      .references(() => user.id),
   },
   (table) => [
     check('current_meal_stock_nonnegative', sql`${table.current_meal_stock} >= 0`),
@@ -46,8 +46,52 @@ export const mealStock = sqliteTable(
   ]
 );
 
-export const users = sqliteTable('users', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const user = sqliteTable('user', {
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
+  emailVerified: integer('emailVerified').notNull(),
+  image: text('image'),
+  createdAt: text('createdAt').notNull(),
+  updatedAt: text('updatedAt').notNull(),
+});
+
+export const session = sqliteTable('session', {
+  id: text('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id),
+  token: text('token').notNull().unique(),
+  expiresAt: text('expiresAt').notNull(),
+  ipAddress: text('ipAddress'),
+  userAgent: text('userAgent'),
+  createdAt: text('createdAt').notNull(),
+  updatedAt: text('updatedAt').notNull(),
+});
+
+export const account = sqliteTable('account', {
+  id: text('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id),
+  accountId: text('accountId').notNull(),
+  providerId: text('providerId').notNull(),
+  accessToken: text('accessToken'),
+  refreshToken: text('refreshToken'),
+  accessTokenExpiresAt: text('accessTokenExpiresAt'),
+  refreshTokenExpiresAt: text('refreshTokenExpiresAt'),
+  scope: text('scope'),
+  idToken: text('idToken'),
+  password: text('password'),
+  createdAt: text('createdAt').notNull(),
+  updatedAt: text('updatedAt').notNull(),
+});
+
+export const verification = sqliteTable('verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: text('expiresAt').notNull(),
+  createdAt: text('createdAt').notNull(),
+  updatedAt: text('updatedAt').notNull(),
 });

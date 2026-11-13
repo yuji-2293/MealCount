@@ -29,6 +29,7 @@ export const purchaseRepository = {
   },
   buildCreateQuery: (db: ReturnType<typeof drizzle>, data: CreatePurchaseData) => {
     const now = new Date().toISOString();
+    const Id = String(data.userId);
     return db
       .insert(purchases)
       .values({
@@ -37,7 +38,7 @@ export const purchaseRepository = {
         planned_amount: data.plannedAmount,
         monthly_amount: data.monthlyAmount,
         purchase_date: data.purchaseDate,
-        user_id: data.userId,
+        userId: Id,
         created_at: now,
         updated_at: now,
       })

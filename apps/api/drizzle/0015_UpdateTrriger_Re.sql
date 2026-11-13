@@ -9,7 +9,7 @@ BEGIN
   WHERE NOT EXISTS (
     SELECT 1
     FROM meal_stock
-    WHERE user_id = NEW.user_id
+    WHERE userId = NEW.userId
   );
 
   -- 対応する在庫データが存在する場合は、在庫の更新処理を行う
@@ -36,5 +36,5 @@ BEGIN
     last_calculated_date = date('now', '+9 hours'),
     version = version + 1,
     updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
-  WHERE user_id = NEW.user_id;
+  WHERE userId = NEW.userId;
 END;

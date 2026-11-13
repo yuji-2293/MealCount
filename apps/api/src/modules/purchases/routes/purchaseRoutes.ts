@@ -36,7 +36,7 @@ const purchases = new Hono<{ Bindings: Bindings }>()
   .patch(
     '/:id',
     zValidator('json', updatePurchaseSchema),
-    zValidator('param', updatePurchaseSchema.pick({ id: true })),
+    zValidator('param', getPurchaseSchema),
     async (c) => {
       const d1 = c.env.meal_count_db;
       const { id } = c.req.valid('param');

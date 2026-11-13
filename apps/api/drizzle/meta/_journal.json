@@ -120,6 +120,41 @@
       "when": 1793794272888,
       "tag": "0016_UpdateMealCountTrriger",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1794542996435,
+      "tag": "0017_createTableUser",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1794544817886,
+      "tag": "0018_remove_user",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1794544969803,
+      "tag": "0019_unusual_ultragirl",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1794546521640,
+      "tag": "0020_updateTrriger",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1794546590960,
+      "tag": "0021_deleteTrriger",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ FOR EACH ROW
 BEGIN
 
 SELECT RAISE(ABORT, '対応するデータが存在しません')
-WHERE NOT EXISTS (SELECT 1 FROM meal_stock WHERE user_id = OLD.user_id);
+WHERE NOT EXISTS (SELECT 1 FROM meal_stock WHERE userId = OLD.userId);
 
 -- 削除後に在庫を更新する
   UPDATE meal_stock
@@ -27,6 +27,6 @@ WHERE NOT EXISTS (SELECT 1 FROM meal_stock WHERE user_id = OLD.user_id);
     last_calculated_date = date('now', '+9 hours'),
     version = version + 1,
     updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
-  WHERE user_id = OLD.user_id;
+  WHERE userId = OLD.userId;
 
 END;

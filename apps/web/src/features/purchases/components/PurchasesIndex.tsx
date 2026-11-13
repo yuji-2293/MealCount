@@ -36,7 +36,6 @@ export const PurchasesIndex = () => {
     updateMutate(
       {
         json: {
-          id,
           plannedAmount,
           sameDayAmount,
           monthlyAmount,
@@ -45,7 +44,7 @@ export const PurchasesIndex = () => {
           version,
         },
         param: {
-          id: String(id),
+          id: id,
         },
       },
       {
@@ -85,8 +84,6 @@ export const PurchasesIndex = () => {
 
       {purchases?.map((purchase) => (
         <div key={purchase.purchase.id}>
-          <p>Purchase ID: {purchase.purchase.id}</p>
-          <p>User ID: {purchase.purchase.userId}</p>
           <p>Version: {purchase.purchase.version}</p>
           <div className="plannedAmount CRUD">
             <p>planed Amount: {purchase.purchase.plannedAmount}</p>
