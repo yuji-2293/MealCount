@@ -37,7 +37,8 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Set Up wrangler types
-        run: pnpm dlx wrangler types
+        working-directory: ./api
+        run: pnpm exec wrangler types
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
