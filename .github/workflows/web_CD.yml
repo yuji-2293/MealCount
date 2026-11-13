@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Set Up wrangler types
-        working-directory: ./api
+        working-directory: ./apps/api
         run: pnpm exec wrangler types
 
       - name: Install dependencies
