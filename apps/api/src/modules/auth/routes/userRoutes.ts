@@ -1,6 +1,6 @@
-import { createAuth } from '../../../lib/auth';
+import { createAuth } from '../../../../src/lib/auth';
 import { Hono } from 'hono';
-import type { SessionUser } from '../../../lib/auth';
+import type { SessionUser } from '../../../../src/lib/auth';
 
 const auths = new Hono<{ Bindings: Env; Variables: { user?: SessionUser } }>()
   .on(['GET', 'POST'], '/api/auth/*', (c) => {

@@ -7,7 +7,12 @@ import type { SessionUser } from './lib/auth';
 
 const app = new Hono<{ Bindings: Env; Variables: { user?: SessionUser } }>();
 
-app.use('*', cors());
+app.use('*', cors({
+  origin: 'http://localhost:5173',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 const routes = app
   .get('/', (c) => {

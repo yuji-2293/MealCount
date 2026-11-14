@@ -13,6 +13,7 @@ export const createAuth = (env: Env) =>
     },
     protocol: 'auto',
     url: env.BETTER_AUTH_URL,
+    trustedOrigins: ['http://localhost:5173'],
   });
 
 export type AuthInstance = ReturnType<typeof createAuth>;
