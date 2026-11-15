@@ -2,6 +2,7 @@ import { PurchasesIndex } from './features/purchases/components/PurchasesIndex';
 import { PurchaseCreateForm } from './features/purchases/components/PurchaseCreateForm';
 import { Toaster } from './components/ui/sonner';
 import { AuthSessions } from './features/auth/components/authSessions';
+import { LoginUser } from './features/auth/components/loginUser';
 function App() {
   return (
     <>
@@ -11,6 +12,7 @@ function App() {
       <PurchasesIndex />
       <PurchaseCreateForm />
       <AuthSessions />
+      <LoginUser />
     </>
   );
 }
