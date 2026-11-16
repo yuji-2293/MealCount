@@ -1,7 +1,7 @@
 import { authClient } from '../../../lib/auth-client';
 import { toast } from 'sonner';
 
-export const LoginUser = () => {
+export const SignInUser = () => {
   const handleLoginUser = async () => {
     await authClient.signIn.email(
       {

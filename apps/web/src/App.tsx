@@ -2,7 +2,9 @@ import { PurchasesIndex } from './features/purchases/components/PurchasesIndex';
 import { PurchaseCreateForm } from './features/purchases/components/PurchaseCreateForm';
 import { Toaster } from './components/ui/sonner';
 import { AuthSessions } from './features/auth/components/authSessions';
-import { LoginUser } from './features/auth/components/loginUser';
+import { SignInUser } from './features/auth/components/signInUser';
+import { SignOutUser } from './features/auth/components/signOutUser';
+import { SignUpUser } from './features/auth/components/signUpUser';
 function App() {
   return (
     <>
@@ -12,7 +14,9 @@ function App() {
       <PurchasesIndex />
       <PurchaseCreateForm />
       <AuthSessions />
-      <LoginUser />
+      <SignInUser />
+      <SignOutUser />
+      <SignUpUser />
     </>
   );
 }
