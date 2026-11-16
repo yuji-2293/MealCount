@@ -23,8 +23,8 @@ export const SignUpUser = () => {
   };
 
   return (
-    <div>
-      <h2>Sign Up User</h2>
+    <div className="p-4 m-4 border border-gray-300 rounded">
+      <h2>新規登録</h2>
       <input
         type="text"
         placeholder="Name"
@@ -43,7 +43,7 @@ export const SignUpUser = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={handleSignUpUser}>Sign Up</button>
+      <button onClick={handleSignUpUser}>新規登録</button>
     </div>
   );
 };
