@@ -8,18 +8,21 @@ export const SignUpUser = () => {
   const [password, setPassword] = useState('');
 
   const handleSignUpUser = async () => {
-    await authClient.signUp
-      .email({
+    await authClient.signUp.email(
+      {
         name,
         email,
         password,
-      })
-      .then(() => {
-        toast.success('Sign up successful');
-      })
-      .catch(() => {
-        toast.error('Sign up failed');
-      });
+      },
+      {
+        onSuccess: () => {
+          toast.success('新規登録成功');
+        },
+        onError: () => {
+          toast.error('新規登録失敗');
+        },
+      }
+    );
   };
 
   return (
