@@ -18,14 +18,23 @@ const calculateTotalAmount = (data: CalculateAmounts): PurchaseAmounts => {
 };
 
 export const purchaseService = {
-  createPurchase: async (data: CreatePurchaseData, d1: D1Database) => {
+  createPurchase: async (data: CreatePurchaseData, d1: D1Database, userId: string) => {
     // dataを受け取って関数に渡し、購入金額の合計や1食あたりの金額を計算
     const amounts = calculateTotalAmount(data);
 
     // postされたpurchaseMealCountに基づいてmealStockを更新するための処理
-    const existingData = await mealStockRepository.findByUserId(d1, data.userId);
+    const existingData = await mealStockRepository.findByUserId(d1, userId);
     if (!existingData) {
-      throw new Error(`Meal stock for user id ${data.userId} not found`);
+      const { firstMealStock, firstPurchase } = await purchaseRepository.firstCreateWithMealStock(
+        data,
+        d1,
+        userId
+      );
+      return {
+        purchase: firstPurchase,
+        mealStock: firstMealStock,
+        amounts,
+      };
     }
 
     // 更新用idを取得
@@ -33,7 +42,8 @@ export const purchaseService = {
     const { mealStock, purchase } = await purchaseRepository.createWithMealStock(
       data,
       d1,
-      mealStockId
+      mealStockId,
+      userId
     );
 
     return {

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import type { Bindings } from '../../../types/bindings';
+import type { SessionUser } from '../../../../src/lib/auth';
 import { purchaseService } from '../services/purchaseService';
 import {
   purchaseSchema,
@@ -8,18 +8,25 @@ import {
   updatePurchaseSchema,
   deletePurchaseSchema,
 } from '../schemas/purchaseSchemas';
+import { authMiddleware } from '../../auth/middleware/authMiddleware';
+const purchases = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>()
+  // middleware処理 :全てのルートに対して認証ミドルウェアを適用
+  .use(authMiddleware)
 
-const purchases = new Hono<{ Bindings: Bindings }>()
   .get('/', async (c) => {
+    const user = c.get('user');
+    const userId = user.id;
     const d1 = c.env.meal_count_db;
-    const allPurchases = await purchaseService.getAllPurchases(d1);
+    const allPurchases = await purchaseService.getAllPurchases(d1, userId);
     return c.json(allPurchases, 200);
   })
 
   .get('/:id', zValidator('param', getPurchaseSchema), async (c) => {
+    const user = c.get('user');
+    const userId = user.id;
     const d1 = c.env.meal_count_db;
     const { id } = c.req.valid('param');
-    const purchase = await purchaseService.findPurchaseById(id, d1);
+    const purchase = await purchaseService.findPurchaseById(id, d1, userId);
     if (!purchase) {
       return c.json({ error: 'Purchase not found' }, 404);
     }
@@ -27,9 +34,11 @@ const purchases = new Hono<{ Bindings: Bindings }>()
   })
 
   .post('/', zValidator('json', purchaseSchema), async (c) => {
+    const user = c.get('user');
+    const userId = user.id;
     const d1 = c.env.meal_count_db;
     const data = c.req.valid('json');
-    const result = await purchaseService.createPurchase(data, d1);
+    const result = await purchaseService.createPurchase(data, d1, userId);
     return c.json(result, 201);
   })
 
@@ -38,11 +47,13 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     zValidator('json', updatePurchaseSchema),
     zValidator('param', getPurchaseSchema),
     async (c) => {
+      const user = c.get('user');
+      const userId = user.id;
       const d1 = c.env.meal_count_db;
       const { id } = c.req.valid('param');
       const data = c.req.valid('json');
 
-      const result = await purchaseService.updatePurchase(id, data, d1);
+      const result = await purchaseService.updatePurchase(id, data, d1, userId);
       if (result.status === 'not_found') {
         return c.json({ error: 'Purchase not found' }, 404);
       }
@@ -61,10 +72,12 @@ const purchases = new Hono<{ Bindings: Bindings }>()
     zValidator('query', deletePurchaseSchema.pick({ version: true })),
     zValidator('param', deletePurchaseSchema.pick({ id: true })),
     async (c) => {
+      const user = c.get('user');
+      const userId = user.id;
       const d1 = c.env.meal_count_db;
       const { id } = c.req.valid('param');
       const { version } = c.req.valid('query');
-      const result = await purchaseService.deletePurchase(id, version, d1);
+      const result = await purchaseService.deletePurchase(id, version, d1, userId);
       if (result.status === 'not_found') {
         return c.json({ error: 'Purchase not found' }, 404);
       }

@@ -5,9 +5,9 @@ import type { UpdateMealStockData } from '../schemas/mealStockSchemas';
 import { calculateEstimatedStock } from '../functions/calculateEstimatedStock';
 
 export const mealStockServices = {
-  getMealStockById: async (d1: D1Database, id: number) => {
+  getMealStockById: async (d1: D1Database, id: number, userId: string) => {
     // elapsedDays 取得処理
-    const data = await mealStockRepository.findById(d1, id);
+    const data = await mealStockRepository.findById(d1, id, userId);
     if (!data) {
       return { status: 'not_found' as const };
     }

@@ -6,14 +6,41 @@ import { eq, and, sql } from 'drizzle-orm';
 import type { UpdatePurchaseData } from '../schemas/purchaseSchemas';
 import { mealStockRepository } from '../../meal-stock/repositories/mealStockRepository';
 export const purchaseRepository = {
-  createWithMealStock: async (data: CreatePurchaseData, d1: D1Database, mealStockId: number) => {
+  // 初回作成時にmealStockとpurchaseを同時に作成する処理
+  firstCreateWithMealStock: async (data: CreatePurchaseData, d1: D1Database, userId: string) => {
+    const db = drizzle(d1);
+    const purchaseQuery = purchaseRepository.buildCreateQuery(db, data, userId);
+    const mealStockQuery = mealStockRepository.buildFirstCreateQuery(
+      db,
+      userId,
+      data.purchasedMealCount
+    );
+
+    const [mealStockRows, purchaseRows] = await db.batch([mealStockQuery, purchaseQuery]);
+
+    if (mealStockRows.length === 0 || purchaseRows.length === 0) {
+      throw new Error('Failed to create initial meal stock or purchase');
+    }
+    return {
+      firstMealStock: mealStockRows[0],
+      firstPurchase: purchaseRows[0],
+    };
+  },
+  // mealStockを更新しつつpurchaseを作成する処理
+  createWithMealStock: async (
+    data: CreatePurchaseData,
+    d1: D1Database,
+    mealStockId: number,
+    userId: string
+  ) => {
     // 在庫を反映してmealStockを更新
     const db = drizzle(d1);
-    const purchaseQuery = purchaseRepository.buildCreateQuery(db, data);
+    const purchaseQuery = purchaseRepository.buildCreateQuery(db, data, userId);
     const mealStockQuery = mealStockRepository.buildAddPurchaseMealCountQuery(
       db,
       mealStockId,
-      data.purchasedMealCount
+      data.purchasedMealCount,
+      userId
     );
 
     // cloudflare D1のbatchでmealStockとpurchaseを同時に作成と更新を行う
@@ -27,9 +54,9 @@ export const purchaseRepository = {
       purchase: purchaseRows[0],
     };
   },
-  buildCreateQuery: (db: ReturnType<typeof drizzle>, data: CreatePurchaseData) => {
+  buildCreateQuery: (db: ReturnType<typeof drizzle>, data: CreatePurchaseData, userId: string) => {
     const now = new Date().toISOString();
-    const Id = String(data.userId);
+    const Id = userId;
     return db
       .insert(purchases)
       .values({

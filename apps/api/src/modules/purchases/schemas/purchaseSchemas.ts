@@ -6,7 +6,6 @@ export const purchaseSchema = z.object({
   plannedAmount: z.number().nonnegative().int(),
   monthlyAmount: z.number().nonnegative().int(),
   purchaseDate: z.string(),
-  userId: z.string(),
   version: z.number().nonnegative().int().optional(),
 });
 
@@ -14,8 +13,6 @@ export const purchaseSchema = z.object({
 export const updatePurchaseSchema = purchaseSchema
   // 部分的に更新可能にするために partial を使用
   .partial()
-  // omitでuserIdを除外
-  .omit({ userId: true })
   // id と version を必須にする
   .required({ version: true })
   // strictモードを有効にして、未知のフィールドを許可しないようにする

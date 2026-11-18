@@ -12,9 +12,12 @@ type MealStockUpdateValues = {
 };
 
 export const mealStockRepository = {
-  findById: async (d1: D1Database, id: number) => {
+  findById: async (d1: D1Database, id: number, userId: string) => {
     const db = drizzle(d1);
-    const [result] = await db.select().from(mealStock).where(eq(mealStock.id, id));
+    const [result] = await db
+      .select()
+      .from(mealStock)
+      .where(and(eq(mealStock.id, id), eq(mealStock.userId, userId)));
     return result;
   },
   // user_idをもとに紐づいているデータを取得する関数
@@ -47,7 +50,8 @@ export const mealStockRepository = {
   buildAddPurchaseMealCountQuery: (
     db: ReturnType<typeof drizzle>,
     id: number,
-    purchasedMealCount: number
+    purchasedMealCount: number,
+    userId: string
   ) => {
     const today = getTodayJST();
     const elapsedDays = sql`MAX(0, CAST(julianday(${today}) - julianday(${mealStock.last_calculated_date}) AS INTEGER))`;
@@ -63,8 +67,26 @@ export const mealStockRepository = {
         version: sql<number>`${mealStock.version} + 1`,
         updated_at: new Date().toISOString(),
       })
-      .where(eq(mealStock.id, id))
+      .where(and(eq(mealStock.id, id), eq(mealStock.userId, userId)))
 
+      .returning();
+  },
+  buildFirstCreateQuery: (
+    db: ReturnType<typeof drizzle>,
+    userId: string,
+    purchasedMealCount: number
+  ) => {
+    const today = getTodayJST();
+    return db
+      .insert(mealStock)
+      .values({
+        userId,
+        current_meal_stock: purchasedMealCount,
+        last_calculated_date: today,
+        daily_meal_count: 0,
+        version: 1,
+        updated_at: new Date().toISOString(),
+      })
       .returning();
   },
 };
