@@ -101,8 +101,8 @@ export const purchaseService = {
     return allWithAmounts;
   },
 
-  findPurchaseById: async (id: number, d1: D1Database) => {
-    const data = await purchaseRepository.findById(id, d1);
+  findPurchaseById: async (id: number, d1: D1Database, userId: string) => {
+    const data = await purchaseRepository.findById(id, d1, userId);
     if (!data) {
       return null;
     }
@@ -130,22 +130,28 @@ export const purchaseService = {
     };
   },
 
-  updatePurchase: async (id: number, data: UpdatePurchaseData, d1: D1Database) => {
+  updatePurchase: async (id: number, data: UpdatePurchaseData, d1: D1Database, userId: string) => {
     // 更新前のpurchaseを取得
-    const existingPurchase = await purchaseRepository.findById(id, d1);
+    const existingPurchase = await purchaseRepository.findById(id, d1, userId);
     if (!existingPurchase) {
       return { status: 'not_found' as const, afterPurchase: null };
     }
     // 更新前のユーザーIDを取得
-    const userId = existingPurchase.userId;
+    const Id = existingPurchase.userId;
     // 更新前のユーザーのmealStockを取得
-    const existingMealStock = await mealStockRepository.findByUserId(d1, userId);
+    const existingMealStock = await mealStockRepository.findByUserId(d1, Id);
     if (!existingMealStock) {
       return { status: 'meal_stock_not_found' as const, afterPurchase: null };
     }
 
     const expectedVersion = data.version;
-    const { afterPurchase } = await purchaseRepository.update(id, data, d1, expectedVersion);
+    const { afterPurchase } = await purchaseRepository.update(
+      id,
+      data,
+      d1,
+      expectedVersion,
+      userId
+    );
     if (!afterPurchase) {
       return { status: 'version_conflict' as const, afterPurchase: null };
     }
@@ -173,14 +179,14 @@ export const purchaseService = {
     };
   },
 
-  deletePurchase: async (id: number, version: number, d1: D1Database) => {
+  deletePurchase: async (id: number, version: number, d1: D1Database, userId: string) => {
     // 削除前の購入情報を取得
-    const existingPurchase = await purchaseRepository.findById(id, d1);
+    const existingPurchase = await purchaseRepository.findById(id, d1, userId);
     if (!existingPurchase) {
       return { status: 'not_found' as const };
     }
     const expectedVersion = version;
-    const deletedPurchase = await purchaseRepository.delete(id, d1, expectedVersion);
+    const deletedPurchase = await purchaseRepository.delete(id, d1, expectedVersion, userId);
     if (!deletedPurchase) {
       return { status: 'version_conflict' as const };
     }

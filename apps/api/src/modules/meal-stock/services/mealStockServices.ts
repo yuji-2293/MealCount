@@ -23,9 +23,14 @@ export const mealStockServices = {
       estimatedStock,
     };
   },
-  updateMealStock: async (d1: D1Database, id: number, data: UpdateMealStockData) => {
+  updateMealStock: async (
+    d1: D1Database,
+    id: number,
+    data: UpdateMealStockData,
+    userId: string
+  ) => {
     // idに紐づく既存のデータを取得
-    const existingData = await mealStockRepository.findById(d1, id);
+    const existingData = await mealStockRepository.findById(d1, id, userId);
     if (!existingData) {
       return { status: 'not_found' as const };
     }
@@ -40,7 +45,8 @@ export const mealStockServices = {
         version: expectedVersion,
       },
 
-      d1
+      d1,
+      userId
     );
     if (!result.afterMealStock) {
       return { status: 'conflict' as const, afterMealStock: null };

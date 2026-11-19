@@ -27,15 +27,20 @@ export const mealStockRepository = {
     const [result] = await db.select().from(mealStock).where(eq(mealStock.userId, Id));
     return result;
   },
-  update: async (id: number, data: MealStockUpdateValues, d1: D1Database) => {
+  update: async (id: number, data: MealStockUpdateValues, d1: D1Database, userId: string) => {
     const db = drizzle(d1);
-    const [result] = await mealStockRepository.buildUpdateQuery(db, id, data);
+    const [result] = await mealStockRepository.buildUpdateQuery(db, id, data, userId);
     if (!result) {
       return { afterMealStock: null };
     }
     return { status: 'ok' as const, afterMealStock: result };
   },
-  buildUpdateQuery: (db: ReturnType<typeof drizzle>, id: number, data: MealStockUpdateValues) => {
+  buildUpdateQuery: (
+    db: ReturnType<typeof drizzle>,
+    id: number,
+    data: MealStockUpdateValues,
+    userId: string
+  ) => {
     return db
       .update(mealStock)
       .set({
@@ -44,7 +49,9 @@ export const mealStockRepository = {
         last_calculated_date: data.lastCalculatedDate,
         updated_at: new Date().toISOString(),
       })
-      .where(and(eq(mealStock.id, id), eq(mealStock.version, data.version)))
+      .where(
+        and(eq(mealStock.id, id), eq(mealStock.version, data.version), eq(mealStock.userId, userId))
+      )
       .returning();
   },
   buildAddPurchaseMealCountQuery: (

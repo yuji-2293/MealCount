@@ -24,13 +24,15 @@ const mealStock = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>(
     zValidator('json', UpdateMealStockSchema),
     zValidator('param', getMealStockSchema),
     async (c) => {
+      const user = c.get('user');
+      const userId = user.id;
       const d1 = c.env.meal_count_db;
       const { id } = c.req.valid('param');
       const data = c.req.valid('json');
       if (!data.version && data.version !== 0) {
         return c.json({ error: 'Meal stock version is required' }, 400);
       }
-      const result = await mealStockServices.updateMealStock(d1, id, data);
+      const result = await mealStockServices.updateMealStock(d1, id, data, userId);
       if (result.status === 'not_found') {
         return c.json({ error: 'Meal stock not found' }, 404);
       }

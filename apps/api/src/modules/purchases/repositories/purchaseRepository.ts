@@ -78,16 +78,31 @@ export const purchaseRepository = {
     return results;
   },
 
-  findById: async (id: number, d1: D1Database) => {
+  findById: async (id: number, d1: D1Database, userId: string) => {
     const db = drizzle(d1);
-    const [result] = await db.select().from(purchases).where(eq(purchases.id, id));
+    const [result] = await db
+      .select()
+      .from(purchases)
+      .where(and(eq(purchases.id, id), eq(purchases.userId, userId)));
     return result;
   },
 
-  update: async (id: number, data: UpdatePurchaseData, d1: D1Database, expectedVersion: number) => {
+  update: async (
+    id: number,
+    data: UpdatePurchaseData,
+    d1: D1Database,
+    expectedVersion: number,
+    userId: string
+  ) => {
     // 更新後の在庫食数をbatchで更新
     const db = drizzle(d1);
-    const [purchases] = await purchaseRepository.buildUpdateQuery(db, id, data, expectedVersion);
+    const [purchases] = await purchaseRepository.buildUpdateQuery(
+      db,
+      id,
+      data,
+      expectedVersion,
+      userId
+    );
 
     if (!purchases) {
       return { afterPurchase: null };
@@ -103,7 +118,8 @@ export const purchaseRepository = {
     db: ReturnType<typeof drizzle>,
     id: number,
     data: UpdatePurchaseData,
-    expectedVersion: number
+    expectedVersion: number,
+    userId: string
   ) => {
     const now = new Date().toISOString();
     return db
@@ -117,19 +133,36 @@ export const purchaseRepository = {
         purchase_date: data.purchaseDate,
         updated_at: now,
       })
-      .where(and(eq(purchases.id, id), eq(purchases.version, expectedVersion)))
+      .where(
+        and(
+          eq(purchases.id, id),
+          eq(purchases.version, expectedVersion),
+          eq(purchases.userId, userId)
+        )
+      )
       .returning();
   },
 
-  delete: async (id: number, d1: D1Database, expectedVersion: number) => {
+  delete: async (id: number, d1: D1Database, expectedVersion: number, userId: string) => {
     const db = drizzle(d1);
-    const [result] = await purchaseRepository.buildDeleteQuery(db, id, expectedVersion);
+    const [result] = await purchaseRepository.buildDeleteQuery(db, id, expectedVersion, userId);
     return result;
   },
-  buildDeleteQuery: (db: ReturnType<typeof drizzle>, id: number, expectedVersion: number) => {
+  buildDeleteQuery: (
+    db: ReturnType<typeof drizzle>,
+    id: number,
+    expectedVersion: number,
+    userId: string
+  ) => {
     return db
       .delete(purchases)
-      .where(and(eq(purchases.id, id), eq(purchases.version, expectedVersion)))
+      .where(
+        and(
+          eq(purchases.id, id),
+          eq(purchases.version, expectedVersion),
+          eq(purchases.userId, userId)
+        )
+      )
       .returning();
   },
 };
