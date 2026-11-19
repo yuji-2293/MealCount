@@ -71,8 +71,8 @@ export const purchaseService = {
     };
   },
 
-  getAllPurchases: async (d1: D1Database) => {
-    const all = await purchaseRepository.findAll(d1);
+  getAllPurchases: async (d1: D1Database, userId: string) => {
+    const all = await purchaseRepository.findAll(d1, userId);
 
     const allWithAmounts = all.map((data) => {
       const calculated: CalculateAmounts = {
