@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import fetchPurchases from '../api/fetchPurchases';
 
-export const usePurchases = () => {
+export const usePurchases = (userId: string) => {
   const query = useQuery({
-    queryKey: ['purchases'],
+    queryKey: ['purchases', userId],
     queryFn: fetchPurchases,
+    enabled: !!userId,
   });
 
   const data = query.data?.purchases;

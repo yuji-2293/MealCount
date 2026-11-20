@@ -5,8 +5,8 @@ import { useState } from 'react';
 import fetchPurchases from '../api/fetchPurchases';
 import { toast } from 'sonner';
 
-export const PurchasesIndex = () => {
-  const { data, query } = usePurchases();
+export const PurchasesIndex = ({ userId }: { userId: string }) => {
+  const { data, query } = usePurchases(userId);
   const { isLoading, error } = query;
   const { mutate, isPending: isDeletePending } = useDeletePurchase();
   const { mutate: updateMutate, isPending: isUpdatePending } = useUpdatePurchase();
