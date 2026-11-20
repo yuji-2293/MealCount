@@ -10,7 +10,6 @@ function App() {
     <>
       <Toaster position="top-right" richColors />
 
-      <h1>success!!</h1>
       <PurchasesIndex />
       <PurchaseCreateForm />
       <AuthSessions />

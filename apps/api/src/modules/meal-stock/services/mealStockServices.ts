@@ -18,7 +18,10 @@ export const mealStockServices = {
       data.daily_meal_count
     );
     return {
-      ...data,
+      dailyMealCount: data.daily_meal_count,
+      currentMealStock: data.current_meal_stock,
+      lastCalculatedDate: data.last_calculated_date,
+      version: data.version,
       elapsedDays,
       estimatedStock,
     };

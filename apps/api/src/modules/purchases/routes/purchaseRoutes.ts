@@ -16,6 +16,7 @@ const purchases = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>(
   .get('/', async (c) => {
     const user = c.get('user');
     const userId = user.id;
+    console.log(userId);
     const d1 = c.env.meal_count_db;
     const allPurchases = await purchaseService.getAllPurchases(d1, userId);
     return c.json(allPurchases, 200);

@@ -7,6 +7,6 @@ export const usePurchases = () => {
     queryFn: fetchPurchases,
   });
 
-  const purchases = query.data;
-  return { purchases, query };
+  const data = query.data?.purchases;
+  return { data, query };
 };

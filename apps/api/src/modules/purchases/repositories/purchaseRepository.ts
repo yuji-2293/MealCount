@@ -75,6 +75,7 @@ export const purchaseRepository = {
   findAll: async (d1: D1Database, userId: string) => {
     const db = drizzle(d1); // Local D1へのアクセス用
     const results = await db.select().from(purchases).where(eq(purchases.userId, userId));
+
     return results;
   },
 

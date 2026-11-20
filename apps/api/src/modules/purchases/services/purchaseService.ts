@@ -100,22 +100,19 @@ export const purchaseService = {
       };
       const amounts = calculateTotalAmount(calculated);
       return {
-        purchase: {
-          id: data.id,
-          purchaseDate: data.purchase_date,
-          sameDayAmount: data.same_day_amount,
-          plannedAmount: data.planned_amount,
-          monthlyAmount: data.monthly_amount,
-          purchasedMealCount: data.purchased_meal_count,
-          userId: data.userId,
-          version: data.version,
-          createdAt: data.created_at,
-          updatedAt: data.updated_at,
-        },
+        id: data.id,
+        purchaseDate: data.purchase_date,
+        sameDayAmount: data.same_day_amount,
+        plannedAmount: data.planned_amount,
+        monthlyAmount: data.monthly_amount,
+        purchasedMealCount: data.purchased_meal_count,
+        version: data.version,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
         amounts,
       };
     });
-    return allWithAmounts;
+    return { status: 'ok' as const, purchases: allWithAmounts };
   },
 
   findPurchaseById: async (id: number, d1: D1Database, userId: string) => {
@@ -131,18 +128,16 @@ export const purchaseService = {
     };
     const amounts = calculateTotalAmount(calculated);
     return {
-      purchase: {
-        id: data.id,
-        purchaseDate: data.purchase_date,
-        sameDayAmount: data.same_day_amount,
-        plannedAmount: data.planned_amount,
-        monthlyAmount: data.monthly_amount,
-        purchasedMealCount: data.purchased_meal_count,
-        userId: data.userId,
-        version: data.version,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-      },
+      id: data.id,
+      purchaseDate: data.purchase_date,
+      sameDayAmount: data.same_day_amount,
+      plannedAmount: data.planned_amount,
+      monthlyAmount: data.monthly_amount,
+      purchasedMealCount: data.purchased_meal_count,
+      userId: data.userId,
+      version: data.version,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
       amounts,
     };
   },

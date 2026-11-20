@@ -8,7 +8,7 @@ export const authMiddleware = createMiddleware<{
   const auth = createAuth(c.env);
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
   if (!session?.user) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return c.json({ error: '未認証' }, 401);
   }
   c.set('user', session?.user);
   return next();
