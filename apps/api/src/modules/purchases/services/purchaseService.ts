@@ -25,14 +25,31 @@ export const purchaseService = {
     // postされたpurchaseMealCountに基づいてmealStockを更新するための処理
     const existingData = await mealStockRepository.findByUserId(d1, userId);
     if (!existingData) {
+      // mealStockが存在しない場合は、新規作成する処理を実行
       const { firstMealStock, firstPurchase } = await purchaseRepository.firstCreateWithMealStock(
         data,
         d1,
         userId
       );
       return {
-        purchase: firstPurchase,
-        mealStock: firstMealStock,
+        purchase: {
+          id: firstPurchase.id,
+          purchaseDate: firstPurchase.purchase_date,
+          sameDayAmount: firstPurchase.same_day_amount,
+          plannedAmount: firstPurchase.planned_amount,
+          monthlyAmount: firstPurchase.monthly_amount,
+          purchasedMealCount: firstPurchase.purchased_meal_count,
+          version: firstPurchase.version,
+          createdAt: firstPurchase.created_at,
+          updatedAt: firstPurchase.updated_at,
+        },
+        mealStock: {
+          id: firstMealStock.id,
+          currentMealStock: firstMealStock.current_meal_stock,
+          lastCalculatedDate: firstMealStock.last_calculated_date,
+          dailyMealCount: firstMealStock.daily_meal_count,
+          updatedAt: firstMealStock.updated_at,
+        },
         amounts,
       };
     }
