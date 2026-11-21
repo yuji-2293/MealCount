@@ -7,13 +7,14 @@ import { SignOutUser } from './features/auth/components/signOutUser';
 import { SignUpUser } from './features/auth/components/signUpUser';
 import { authClient } from './lib/auth-client';
 function App() {
-  const { data } = authClient.useSession();
+  const { data, isPending, error } = authClient.useSession();
   // サーバーに送信しない、クライアント側でのみ使用するユーザーID
   const userId = data?.user?.id;
   return (
     <>
       <Toaster position="top-right" richColors />
-
+      {isPending && <p>Loading session...</p>}
+      {error && <p>Error: {error.message}</p>}
       <PurchasesIndex userId={userId ?? ''} />
       <PurchaseCreateForm />
       <AuthSessions />
