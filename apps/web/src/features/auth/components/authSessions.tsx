@@ -1,7 +1,7 @@
 import { authClient } from '../../../lib/auth-client';
 
 export const AuthSessions = () => {
-  const { data, isPending, error }  = authClient.useSession();
+  const { data, isPending, error } = authClient.useSession();
   return (
     <div className="p-4 m-4 border border-gray-300 rounded">
       {isPending && <p>Loading...</p>}
