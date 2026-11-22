@@ -7,6 +7,7 @@ export function useCreatePurchase() {
     mutationFn: postPurchase,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
+      queryClient.invalidateQueries({ queryKey: ['mealStock'] });
     },
   });
   return { ...mutation };

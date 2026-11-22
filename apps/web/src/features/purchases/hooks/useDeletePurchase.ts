@@ -7,6 +7,7 @@ export function useDeletePurchase() {
     mutationFn: deletePurchase,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
+      queryClient.invalidateQueries({ queryKey: ['mealStock'] });
     },
   });
   return mutation;
