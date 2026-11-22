@@ -6,4 +6,4 @@ export default async function getMealStock() {
     throw new Error('Failed to fetch meal stock');
   }
   return res.json();
-};
+}
