@@ -6,6 +6,8 @@ import { SignInUser } from './features/auth/components/signInUser';
 import { SignOutUser } from './features/auth/components/signOutUser';
 import { SignUpUser } from './features/auth/components/signUpUser';
 import { authClient } from './lib/auth-client';
+import { MealStockIndex } from './features/mealStock/components/MealStockIndex';
+
 function App() {
   const { data, isPending, error } = authClient.useSession();
   // サーバーに送信しない、クライアント側でのみ使用するユーザーID
@@ -17,6 +19,7 @@ function App() {
       {error && <p>Error: {error.message}</p>}
       <PurchasesIndex userId={userId ?? ''} />
       <PurchaseCreateForm />
+      <MealStockIndex userId={userId ?? ''} />
       <AuthSessions />
       <SignInUser />
       <SignOutUser />

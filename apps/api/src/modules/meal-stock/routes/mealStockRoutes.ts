@@ -8,12 +8,11 @@ import { authMiddleware } from '../../auth/middleware/authMiddleware';
 const mealStock = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>()
   // middleware処理 :全てのルートに対して認証ミドルウェアを適用
   .use(authMiddleware)
-  .get('/:id', zValidator('param', getMealStockSchema), async (c) => {
+  .get('/', async (c) => {
     const user = c.get('user');
     const userId = user.id;
     const d1 = c.env.meal_count_db;
-    const { id } = c.req.valid('param');
-    const mealStockData = await mealStockServices.getMealStockById(d1, id, userId);
+    const mealStockData = await mealStockServices.getMealStockById(d1, userId);
     if (mealStockData.status === 'not_found') {
       return c.json({ error: 'Meal stock not found' }, 404);
     }

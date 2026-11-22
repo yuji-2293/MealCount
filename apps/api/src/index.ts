@@ -7,19 +7,22 @@ import type { SessionUser } from './lib/auth';
 
 const app = new Hono<{ Bindings: Env; Variables: { user?: SessionUser } }>();
 
-app.use('*', cors({
-  origin: 'http://localhost:5173',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(
+  '*',
+  cors({
+    origin: 'http://localhost:5173',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 
 const routes = app
   .get('/', (c) => {
     return c.json({ message: 'success' });
   })
   .route('/purchases', purchases)
-  .route('/meal-stock', mealStock)
+  .route('/mealStock', mealStock)
   .route('/', auths);
 
 export type AppType = typeof routes;

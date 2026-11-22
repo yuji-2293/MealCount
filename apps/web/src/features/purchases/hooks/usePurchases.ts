@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import fetchPurchases from '../api/fetchPurchases';
+import fetchPurchases from '../api/getPurchases';
 
 export const usePurchases = (userId: string) => {
   const query = useQuery({

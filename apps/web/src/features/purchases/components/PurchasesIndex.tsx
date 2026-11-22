@@ -2,7 +2,7 @@ import { usePurchases } from '../hooks/usePurchases';
 import { useDeletePurchase } from '../hooks/useDeletePurchase';
 import { useUpdatePurchase } from '../hooks/useUpdatePurchase';
 import { useState } from 'react';
-import fetchPurchases from '../api/fetchPurchases';
+import fetchPurchases from '../api/getPurchases';
 import { toast } from 'sonner';
 
 export const PurchasesIndex = ({ userId }: { userId: string }) => {
@@ -86,14 +86,14 @@ export const PurchasesIndex = ({ userId }: { userId: string }) => {
         <div key={purchase.id}>
           <p>Version: {purchase.version}</p>
           <div className="plannedAmount CRUD">
-            <p>planed Amount: {purchase.plannedAmount}</p>
-            <p>same Day Amount: {purchase.sameDayAmount}</p>
-            <p>monthly Amount: {purchase.monthlyAmount}</p>
-            <p>purchased Meal Count: {purchase.purchasedMealCount}</p>
-            <p>totalAmount: {purchase.amounts.totalAmount}</p>
-            <p>total Real Amount: {purchase.amounts.totalRealAmount}</p>
-            <p>one Meal Cost: {purchase.amounts.oneMealCost}</p>
-            <p>purchase Date: {purchase.purchaseDate}</p>
+            <p>計画消費: {purchase.plannedAmount}</p>
+            <p>当日消費: {purchase.sameDayAmount}</p>
+            <p>月間消費: {purchase.monthlyAmount}</p>
+            <p>購入済み食数: {purchase.purchasedMealCount}</p>
+            <p>合計金額: {purchase.amounts.totalAmount}</p>
+            <p>実質合計金額: {purchase.amounts.totalRealAmount}</p>
+            <p>一食あたりの金額: {purchase.amounts.oneMealCost}</p>
+            <p>購入日: {purchase.purchaseDate}</p>
 
             <div className="buttons">
               <button onClick={() => handleEdit(purchase)}>edit</button>

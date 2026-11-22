@@ -6,7 +6,7 @@
 
 ## 取得
 
-### `GET /meal-stock/:id`
+### `GET /meal-stock`
 
 #### Response: `200 OK`
 
