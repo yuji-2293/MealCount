@@ -12,7 +12,7 @@ const mealStock = new Hono<{ Bindings: Env; Variables: { user: SessionUser } }>(
     const user = c.get('user');
     const userId = user.id;
     const d1 = c.env.meal_count_db;
-    const mealStockData = await mealStockServices.getMealStockById(d1, userId);
+    const mealStockData = await mealStockServices.getMealStock(d1, userId);
     if (mealStockData.status === 'not_found') {
       return c.json({ error: 'Meal stock not found' }, 404);
     }

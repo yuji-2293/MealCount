@@ -2,7 +2,7 @@ import { usePurchases } from '../hooks/usePurchases';
 import { useDeletePurchase } from '../hooks/useDeletePurchase';
 import { useUpdatePurchase } from '../hooks/useUpdatePurchase';
 import { useState } from 'react';
-import fetchPurchases from '../api/getPurchases';
+import getPurchases from '../api/getPurchases';
 import { toast } from 'sonner';
 
 export const PurchasesIndex = ({ userId }: { userId: string }) => {
@@ -20,7 +20,7 @@ export const PurchasesIndex = ({ userId }: { userId: string }) => {
   const [version, setVersion] = useState<number>(0);
 
   // /GET api関数のfetchPurchasesの戻り値の型を取得するための型定義
-  type PurchaseItem = Awaited<ReturnType<typeof fetchPurchases>>['purchases'][number];
+  type PurchaseItem = Awaited<ReturnType<typeof getPurchases>>['purchases'][number];
   // 編集対象のdataに対してPurchaseItemを型として、handleEdit関数の引数に型を付与している。
   const handleEdit = (purchase: PurchaseItem) => {
     setEditId(purchase.id);
