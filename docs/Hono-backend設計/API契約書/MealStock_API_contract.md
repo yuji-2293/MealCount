@@ -20,7 +20,8 @@
   "updated_at": "2026-11-08T00:00:00.000Z",
   "user_id": 1,
   "elapsedDays": 0,
-  "estimatedStock": 20
+  "estimatedStock": 20,
+  "estimatedDepletionDate": "2026-11-08"  // 推定在庫が尽きる日 !service層で計算して返す
 }
 ```
 
@@ -35,6 +36,7 @@
 | `user_id` | number | 所有ユーザー ID |
 | `elapsedDays` | number | `last_calculated_date` からの経過日数 |
 | `estimatedStock` | number | 経過消費を差し引いた推定在庫（0 以上） |
+| `estimatedDepletionDate` | string | 推定在庫が尽きる日 |
 
 存在しない ID の場合、現実装は明示的な `404` レスポンスを返さず例外になる。そのため `404` の JSON 契約は存在しない。
 

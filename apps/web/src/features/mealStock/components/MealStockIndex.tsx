@@ -15,6 +15,7 @@ export const MealStockIndex = ({ userId }: { userId: string }) => {
           <p>現在の在庫: {data.currentMealStock}</p>
           <p>最終計算日: {data.lastCalculatedDate}</p>
           <p>推定在庫: {data.estimatedStock}</p>
+          <p>推定在庫が尽きる日: {data.estimatedDepletionDate}</p>
         </div>
       )}
     </div>
