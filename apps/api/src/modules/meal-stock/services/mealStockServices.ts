@@ -11,7 +11,7 @@ export const mealStockServices = {
       return { status: 'not_found' as const };
     }
     // 共通関数にdataを渡して推定在庫を計算
-    const { elapsedDays, estimatedStock } = calculateEstimatedStock(
+    const { elapsedDays, estimatedStock, estimatedDepletionDate } = calculateEstimatedStock(
       data.last_calculated_date,
       data.current_meal_stock,
       data.daily_meal_count
@@ -23,6 +23,7 @@ export const mealStockServices = {
       version: data.version,
       elapsedDays,
       estimatedStock,
+      estimatedDepletionDate,
     };
   },
   updateMealStock: async (
