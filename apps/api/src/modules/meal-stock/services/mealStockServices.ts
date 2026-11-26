@@ -11,11 +11,12 @@ export const mealStockServices = {
       return { status: 'not_found' as const };
     }
     // 共通関数にdataを渡して推定在庫を計算
-    const { elapsedDays, estimatedStock, estimatedDepletionDate, estimatedNumber } = calculateEstimatedStock(
-      data.last_calculated_date,
-      data.current_meal_stock,
-      data.daily_meal_count
-    );
+    const { elapsedDays, estimatedStock, estimatedDepletionDate, estimatedNumber } =
+      calculateEstimatedStock(
+        data.last_calculated_date,
+        data.current_meal_stock,
+        data.daily_meal_count
+      );
     const estimatedDepletionString = estimatedDepletionDate.toISOString().split('T')[0];
     return {
       dailyMealCount: data.daily_meal_count,
