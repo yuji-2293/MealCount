@@ -10,6 +10,7 @@
       "database_name": "meal-count-db",
       "database_id": "633c7dc5-8bca-4cac-ba33-6167079c6aef",
       "remote": false,
+      "migrations_dir": "./drizzle",
     },
   ],
   // "compatibility_flags": [
