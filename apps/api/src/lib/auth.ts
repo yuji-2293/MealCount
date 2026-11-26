@@ -14,6 +14,13 @@ export const createAuth = (env: Env) =>
     protocol: 'auto',
     url: env.BETTER_AUTH_URL,
     trustedOrigins: ['http://localhost:5173', 'https://mealcount-web.pages.dev'],
+    advanced: {
+      useSecureCookies: true,
+      defaultCookieAttributes: {
+        secure: true,
+        sameSite: 'none',
+      },
+    },
   });
 
 export type AuthInstance = ReturnType<typeof createAuth>;
