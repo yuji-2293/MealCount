@@ -89,7 +89,7 @@ export const mealStockRepository = {
         userId,
         current_meal_stock: purchasedMealCount,
         last_calculated_date: today,
-        daily_meal_count: 0,
+        daily_meal_count: 3,
         version: 1,
         updated_at: new Date().toISOString(),
       })
