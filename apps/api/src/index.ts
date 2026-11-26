@@ -10,7 +10,7 @@ const app = new Hono<{ Bindings: Env; Variables: { user?: SessionUser } }>();
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://mealcount-web.pages.dev/'],
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
