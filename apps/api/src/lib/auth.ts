@@ -9,11 +9,11 @@ export const createAuth = (env: Env) =>
     secrets: [{ version: 1, value: env.BETTER_AUTH_SECRET }],
 
     baseURL: {
-      allowedHosts: ['localhost:8787', 'https://api.mealcount-workersdev.workers.dev/'],
+      allowedHosts: ['localhost:8787', 'api.mealcount-workersdev.workers.dev'],
     },
     protocol: 'auto',
     url: env.BETTER_AUTH_URL,
-    trustedOrigins: ['http://localhost:5173', 'https://mealcount-web.pages.dev/'],
+    trustedOrigins: ['http://localhost:5173', 'https://mealcount-web.pages.dev'],
   });
 
 export type AuthInstance = ReturnType<typeof createAuth>;
